@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@guide/shared": "workspace:*",
+    "@guide/carto": "workspace:*",
     "fontkit": "^2.0.4",
     "hyphenation.en-us": "^0.2.1",
     "hypher": "^0.2.5",

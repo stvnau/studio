@@ -24,9 +24,12 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_DATA_DIR = path.resolve(HERE, '../../../data');
 const STUDIO_DIST = path.resolve(HERE, '../../studio/dist');
 
+/** An exporter, or a factory built from the server's own db + data dir. */
+export type ExporterFactory = (db: ReturnType<typeof openDb>, dataDir: string) => Exporter;
+
 export interface CreateServerOptions {
   dataDir?: string;
-  exporter?: Exporter;
+  exporter?: Exporter | ExporterFactory;
   logger?: boolean;
 }
 
@@ -90,8 +93,10 @@ export async function createServer(opts: CreateServerOptions = {}): Promise<Fast
   registerEditionRoutes(app);
   registerAssetRoutes(app);
   registerFontRoutes(app);
-  registerExportRoutes(app, opts.exporter);
-  registerDigitalRoutes(app);
+  const exporter =
+    typeof opts.exporter === 'function' ? opts.exporter(db, dataDir) : opts.exporter;
+  registerExportRoutes(app, exporter);
+  registerDigitalRoutes(app, exporter);
 
   // Serve the built studio SPA when present (production single-binary mode).
   if (existsSync(STUDIO_DIST) && statSync(STUDIO_DIST).isDirectory()) {

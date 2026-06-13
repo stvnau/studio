@@ -10,6 +10,7 @@ import type {
   CopyfitSpec,
   Diagnostic,
   DLItem,
+  FontSelection,
   ParagraphContent,
   Rect,
 } from '@guide/shared';
@@ -19,6 +20,8 @@ export interface TextEnv {
   fonts: FontManager;
   /** Splits a word into hyphenatable parts ('waffle' -> ['waf','fle']). */
   hyphenate: (word: string) => string[];
+  /** Resolves a role/weight/italic selection to a concrete loaded font id. */
+  resolveFont: (sel: FontSelection) => string;
 }
 
 export interface TextFrameSpec {

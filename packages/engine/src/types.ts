@@ -4,7 +4,17 @@
  * these from the same primitives.
  */
 
-import type { Diagnostic, DLItem, DocRender, Edition, ImageAsset, OsmData, Rect } from '@guide/shared';
+import type {
+  Business,
+  Diagnostic,
+  DLItem,
+  DocRender,
+  Edition,
+  ImageAsset,
+  OsmData,
+  Rect,
+} from '@guide/shared';
+import type { MapEnv, MapResult } from '@guide/carto';
 import type { FontManager } from './fonts.js';
 
 export interface AssetCatalog {
@@ -12,11 +22,27 @@ export interface AssetCatalog {
   get(id: string): ImageAsset | undefined;
 }
 
+export interface BusinessCatalog {
+  /** The directory record a listing places, or undefined if it was removed. */
+  get(id: string): Business | undefined;
+}
+
+/**
+ * The cartography compiler, injected so the engine stays the single producer
+ * of geometry without taking a runtime dependency on @guide/carto: the
+ * exporter (which owns both) passes carto's `compileMap` here. Its output is
+ * merged straight into the one DocRender, preserving editor↔press parity.
+ */
+export type MapCompileFn = (data: OsmData, env: MapEnv) => MapResult;
+
 export interface CompileEnv {
   fonts: FontManager;
   assets: AssetCatalog;
+  businesses: BusinessCatalog;
   /** Map data, pre-fetched for edition.map.bbox by the caller. */
   mapData?: OsmData;
+  /** Cartography compiler (carto.compileMap); absent → map pages show a notice. */
+  compileMap?: MapCompileFn;
 }
 
 export interface CompileResult extends DocRender {

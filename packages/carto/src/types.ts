@@ -10,6 +10,7 @@ import type {
   Diagnostic,
   DLItem,
   FrameOverride,
+  OpenTypeFeatures,
   PathSpec,
   Rect,
   Tier,
@@ -80,6 +81,11 @@ export interface MapEnv {
     legendTitle: string;
     pinNumber: string;
     attribution: string;
+    /**
+     * Optional italic-feel face for water/sea labels (additive; falls back
+     * to `label` when absent).
+     */
+    labelWater?: string;
   };
   /** Shape a one-line label (provided by the engine — single shaping path). */
   shapeLabel: (
@@ -88,6 +94,8 @@ export interface MapEnv {
     size: number,
     color: Color,
     letterSpacing?: number,
+    /** Optional OpenType features (additive; e.g. tnum for pin numbers). */
+    features?: OpenTypeFeatures,
   ) => ShapedLabel;
   listings: MapListing[];
   hotel: { name: string; lat: number; lng: number };
@@ -95,6 +103,8 @@ export interface MapEnv {
   overrides: ReadonlyMap<string, FrameOverride>;
   /** Always rendered. '© OpenStreetMap contributors'. */
   attribution: string;
+  /** Optional legend panel title (additive); default 'In this guide'. */
+  legendTitle?: string;
 }
 
 export interface PlacedFrame {

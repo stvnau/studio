@@ -156,20 +156,21 @@ function makeStyles(font: GuideTheme['font'], colors: GuideColors) {
     color: colors.ink,
     ...over,
   });
-  // Note: `font.role` is unused at resolution time — resolved ids are carried
-  // in `fontId` (additive field used by the typesetter via theme resolution).
+  const display: ParagraphStyle['font'] = { role: 'display', weight: 600 };
+  const sansLabel: ParagraphStyle['font'] = { role: 'sans', weight: 600 };
+  const sansMeta: ParagraphStyle['font'] = { role: 'sans', weight: 500 };
   return {
     /** Divider display — large Fraunces, tight. */
     display: (size = 40) =>
-      base({ size, leading: size * 1.02, color: colors.paper, features: { liga: true } }),
+      base({ font: display, size, leading: size * 1.02, color: colors.paper, features: { liga: true } }),
     /** Page heading (welcome, keys). */
-    h1: base({ size: 17.5, leading: 23 }),
+    h1: base({ font: display, size: 17.5, leading: 23 }),
     /** Listing name by tier. */
-    nameFull: base({ size: 16.5, leading: 19 }),
-    nameHalf: base({ size: 11.5, leading: 13.5 }),
-    nameQuarter: base({ size: 9.5, leading: 11.5 }),
+    nameFull: base({ font: display, size: 16.5, leading: 19 }),
+    nameHalf: base({ font: display, size: 11.5, leading: 13.5 }),
+    nameQuarter: base({ font: display, size: 9.5, leading: 11.5 }),
     /** Kicker / section label — tracked caps. */
-    kicker: base({ size: 6.6, leading: 9, tracking: 145, caps: true, color: colors.secondary }),
+    kicker: base({ font: sansLabel, size: 6.6, leading: 9, tracking: 145, caps: true, color: colors.secondary }),
     /** Body text — justified with hyphenation, on the grid. */
     body: base({
       size: 8.5,
@@ -190,13 +191,13 @@ function makeStyles(font: GuideTheme['font'], colors: GuideColors) {
       features: { onum: true, liga: true },
     }),
     /** One-liner — serif italic. */
-    oneLiner: base({ size: 8.6, leading: 11, color: colors.inkSoft }),
+    oneLiner: base({ font: { role: 'text', weight: 400, italic: true }, size: 8.6, leading: 11, color: colors.inkSoft }),
     /** Meta lines (address, phone) — small tracked caps. */
-    meta: base({ size: 6.2, leading: 9.5, tracking: 65, caps: true, color: colors.inkSoft }),
+    meta: base({ font: sansMeta, size: 6.2, leading: 9.5, tracking: 65, caps: true, color: colors.inkSoft }),
     /** Folio / running foot. */
-    folio: base({ size: 6.4, leading: 8, tracking: 85, caps: true, color: colors.inkSoft }),
+    folio: base({ font: sansMeta, size: 6.4, leading: 8, tracking: 85, caps: true, color: colors.inkSoft }),
     /** Stay-essentials table. */
-    tableLabel: base({ size: 6.4, leading: 11.5, tracking: 110, caps: true, color: colors.inkSoft }),
+    tableLabel: base({ font: sansLabel, size: 6.4, leading: 11.5, tracking: 110, caps: true, color: colors.inkSoft }),
     tableValue: base({ size: 8.2, leading: 11.5, features: { onum: true } }),
     /** Welcome intro — larger serif. */
     intro: base({ size: 10.5, leading: 15, color: colors.ink }),

@@ -7,15 +7,27 @@
 import type { FastifyInstance } from 'fastify';
 import type { Edition } from '@guide/shared';
 import { z } from 'zod';
+import type { Exporter } from '../exporter.js';
 
 const Params = z.object({ editionId: z.string() });
 
-export function registerDigitalRoutes(app: FastifyInstance): void {
+export function registerDigitalRoutes(app: FastifyInstance, exporter?: Exporter): void {
   const db = app.db;
 
   app.get('/g/:editionId', async (req, reply) => {
     const { editionId } = Params.parse(req.params);
     reply.header('content-type', 'text/html; charset=utf-8');
+    const row = db.prepare('SELECT doc FROM editions WHERE id = ?').get(editionId) as
+      | { doc: string }
+      | undefined;
+    if (!row) return reply.code(404).send('<!doctype html><title>Not found</title><h1>Guide not found</h1>');
+
+    if (exporter) {
+      const edition = JSON.parse(row.doc) as Edition;
+      const result = await exporter.run(edition, 'digital');
+      return Buffer.from(result.bytes);
+    }
+    // No exporter wired (e.g. test mode): minimal shell.
     return `<!doctype html>
 <html lang="en">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Guide</title></head>

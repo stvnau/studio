@@ -86,6 +86,7 @@ function Properties({ ctx }: { ctx: EditorCtx }) {
 
   return (
     <>
+      <ListingContent ctx={ctx} frameId={frameId} />
       <div className="insp-block">
         <h4>{frame.kind} · element</h4>
         <div style={{ fontSize: 12, color: 'var(--ink-faint)', marginBottom: 12, wordBreak: 'break-all', fontVariantNumeric: 'tabular-nums' }}>{frameId}</div>
@@ -118,6 +119,62 @@ function Properties({ ctx }: { ctx: EditorCtx }) {
         </div>
       </div>
     </>
+  );
+}
+
+/**
+ * Edit a listing's per-edition copy overrides in place. Empty means "use the
+ * directory record" — the placeholder shows what that fallback is. Writing
+ * here changes the copy the engine resolves, so the canvas reflows live.
+ */
+function ListingContent({ ctx, frameId }: { ctx: EditorCtx; frameId: string }) {
+  const m = /^listing:([^:]+):/.exec(frameId);
+  if (!m) return null;
+  const listingId = m[1]!;
+  const listing = ctx.edition.listings.find((l) => l.id === listingId);
+  if (!listing) return null;
+  const biz = ctx.businesses.find((b) => b.id === listing.businessId);
+
+  const setCopy = (field: 'name' | 'oneLiner' | 'description', value: string) => {
+    ctx.update((e) => {
+      const l = e.listings.find((x) => x.id === listingId);
+      if (!l) return;
+      const copy = { ...(l.copy ?? {}) };
+      if (value.trim()) copy[field] = value;
+      else delete copy[field];
+      l.copy = Object.keys(copy).length ? copy : undefined;
+    });
+  };
+
+  return (
+    <div className="insp-block">
+      <h4>Content · {biz?.name ?? 'listing'}</h4>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <TextField label="Name" value={listing.copy?.name ?? ''} placeholder={biz?.name ?? ''} onCommit={(v) => setCopy('name', v)} />
+        <TextField label="One-liner" value={listing.copy?.oneLiner ?? ''} placeholder={biz?.oneLiner ?? ''} onCommit={(v) => setCopy('oneLiner', v)} />
+        <TextField label="Description" value={listing.copy?.description ?? ''} placeholder={biz?.description ?? ''} textarea onCommit={(v) => setCopy('description', v)} />
+      </div>
+    </div>
+  );
+}
+
+function TextField({ label, value, placeholder, textarea, onCommit }: {
+  label: string; value: string; placeholder?: string; textarea?: boolean; onCommit: (v: string) => void;
+}) {
+  const [local, setLocal] = useState(value);
+  const [seen, setSeen] = useState(value);
+  if (seen !== value) { setSeen(value); setLocal(value); }
+  const common = {
+    value: local,
+    placeholder,
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setLocal(e.target.value),
+    onBlur: () => { if (local !== value) onCommit(local); },
+  };
+  return (
+    <div className="field">
+      <label>{label}</label>
+      {textarea ? <textarea className="textarea" rows={3} {...common} /> : <input className="input" {...common} />}
+    </div>
   );
 }
 

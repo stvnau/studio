@@ -71,13 +71,16 @@ export async function createServer(opts: CreateServerOptions = {}): Promise<Fast
   });
   await app.register(fastifyMultipart, { limits: { fileSize: 40 * 1024 * 1024 } });
 
-  app.setErrorHandler((err, req, reply) => {
+  app.setErrorHandler((err: unknown, req, reply) => {
     if (err instanceof ZodError) {
       return reply.code(400).send({ error: 'validation failed', issues: err.issues });
     }
-    const status = err.statusCode && err.statusCode >= 400 ? err.statusCode : 500;
+    const e = err as { statusCode?: number; message?: string };
+    const status = typeof e.statusCode === 'number' && e.statusCode >= 400 ? e.statusCode : 500;
     if (status >= 500) req.log.error(err);
-    return reply.code(status).send({ error: status >= 500 ? 'internal server error' : err.message });
+    return reply
+      .code(status)
+      .send({ error: status >= 500 ? 'internal server error' : (e.message ?? 'request failed') });
   });
 
   app.get('/api/health', async () => ({ ok: true }));

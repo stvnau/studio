@@ -1,0 +1,192 @@
+/* =========================================================================
+   Guide Studio — the studio's own design system.
+   Editorial, calm, warm. The chrome is paper-toned and recedes; the pages
+   being designed float on a quiet dark stage and are the hero. This is the
+   app's identity, deliberately distinct from any guide's hotel-specific look.
+   ========================================================================= */
+
+/* App UI type — the same binaries the press uses, served from the API. */
+@font-face {
+  font-family: 'Newsreader';
+  font-style: normal; font-weight: 400; font-display: swap;
+  src: url('/api/fonts/newsreader-400/file') format('truetype');
+}
+@font-face {
+  font-family: 'Newsreader';
+  font-style: italic; font-weight: 400; font-display: swap;
+  src: url('/api/fonts/newsreader-400i/file') format('truetype');
+}
+@font-face {
+  font-family: 'Newsreader';
+  font-style: normal; font-weight: 500; font-display: swap;
+  src: url('/api/fonts/newsreader-500/file') format('truetype');
+}
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal; font-weight: 400; font-display: swap;
+  src: url('/api/fonts/instrumentsans-400/file') format('truetype');
+}
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal; font-weight: 500; font-display: swap;
+  src: url('/api/fonts/instrumentsans-500/file') format('truetype');
+}
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal; font-weight: 600; font-display: swap;
+  src: url('/api/fonts/instrumentsans-600/file') format('truetype');
+}
+
+:root {
+  --paper: #f3f0e8;
+  --surface: #fcfbf7;
+  --surface-2: #efebe1;
+  --raised: #ffffff;
+  --ink: #1b1a16;
+  --ink-soft: #56534b;
+  --ink-faint: #928e83;
+  --line: #e6e1d5;
+  --line-strong: #d7d0c0;
+  --accent: #bd5b36;
+  --accent-ink: #9c4626;
+  --accent-soft: #f4e4d9;
+  --accent-wash: #faf0e9;
+  --stage: #232020;
+  --stage-2: #2d2a28;
+  --good: #3f7d5b;
+  --good-soft: #e4efe6;
+  --warn: #a9792a;
+  --warn-soft: #f5ecd6;
+  --bad: #b1452c;
+  --bad-soft: #f6e2db;
+
+  --r-xs: 5px;
+  --r-sm: 8px;
+  --r: 11px;
+  --r-lg: 16px;
+  --r-xl: 22px;
+
+  --font-serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  --shadow-1: 0 1px 2px rgba(35, 30, 24, 0.05), 0 1px 0 rgba(35, 30, 24, 0.02);
+  --shadow-2: 0 4px 14px -6px rgba(35, 30, 24, 0.18), 0 1px 3px rgba(35, 30, 24, 0.06);
+  --shadow-3: 0 18px 50px -22px rgba(20, 16, 12, 0.55), 0 4px 14px -8px rgba(20, 16, 12, 0.4);
+  --shadow-page: 0 30px 70px -30px rgba(0, 0, 0, 0.6), 0 8px 22px -12px rgba(0, 0, 0, 0.45);
+
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-fast: 130ms;
+  --t: 200ms;
+  --t-slow: 360ms;
+
+  --topbar-h: 58px;
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'cv11' 1, 'ss01' 1;
+}
+::selection { background: var(--accent-soft); }
+button { font: inherit; color: inherit; }
+input, textarea, select { font: inherit; color: inherit; }
+a { color: inherit; }
+
+/* Quiet, accent-tinted scrollbars. */
+* { scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 99px; border: 3px solid transparent; background-clip: content-box; }
+*::-webkit-scrollbar-thumb:hover { background: var(--ink-faint); }
+
+/* ---- typography helpers ---- */
+.serif { font-family: var(--font-serif); }
+.eyebrow {
+  font-size: 10.5px; font-weight: 600; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ink-faint);
+}
+.muted { color: var(--ink-soft); }
+.faint { color: var(--ink-faint); }
+
+/* ---- buttons ---- */
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 14px; border-radius: var(--r-sm);
+  border: 1px solid var(--line-strong); background: var(--surface);
+  color: var(--ink); font-size: 13px; font-weight: 500;
+  cursor: pointer; box-shadow: var(--shadow-1);
+  transition: transform var(--t-fast) var(--ease), background var(--t-fast),
+    border-color var(--t-fast), box-shadow var(--t-fast), color var(--t-fast);
+  user-select: none; white-space: nowrap;
+}
+.btn:hover { background: var(--raised); border-color: var(--ink-faint); }
+.btn:active { transform: translateY(1px); box-shadow: none; }
+.btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+.btn.primary {
+  background: var(--ink); color: var(--paper); border-color: var(--ink);
+}
+.btn.primary:hover { background: #000; }
+.btn.accent {
+  background: var(--accent); color: #fff; border-color: var(--accent-ink);
+}
+.btn.accent:hover { background: var(--accent-ink); }
+.btn.ghost { background: transparent; border-color: transparent; box-shadow: none; }
+.btn.ghost:hover { background: var(--surface-2); }
+.btn.sm { padding: 5px 10px; font-size: 12px; border-radius: var(--r-xs); }
+.btn.icon { padding: 7px; }
+
+.iconbtn {
+  display: inline-grid; place-items: center; width: 30px; height: 30px;
+  border-radius: var(--r-sm); border: 1px solid transparent; background: transparent;
+  color: var(--ink-soft); cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+}
+.iconbtn:hover { background: var(--surface-2); color: var(--ink); }
+.iconbtn.on { background: var(--ink); color: var(--paper); }
+
+/* ---- segmented control ---- */
+.seg { display: inline-flex; background: var(--surface-2); border-radius: var(--r-sm); padding: 3px; gap: 2px; }
+.seg button {
+  border: 0; background: transparent; color: var(--ink-soft); cursor: pointer;
+  padding: 5px 11px; border-radius: var(--r-xs); font-size: 12.5px; font-weight: 500;
+  transition: background var(--t-fast), color var(--t-fast), box-shadow var(--t-fast);
+}
+.seg button.on { background: var(--raised); color: var(--ink); box-shadow: var(--shadow-1); }
+
+/* ---- inputs ---- */
+.input, .textarea, .select {
+  width: 100%; padding: 8px 11px; border-radius: var(--r-sm);
+  border: 1px solid var(--line-strong); background: var(--surface);
+  color: var(--ink); transition: border-color var(--t-fast), box-shadow var(--t-fast), background var(--t-fast);
+}
+.input:focus, .textarea:focus, .select:focus {
+  outline: none; border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-wash); background: var(--raised);
+}
+.textarea { resize: vertical; min-height: 64px; line-height: 1.45; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field > label { font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: var(--ink-soft); text-transform: uppercase; }
+
+/* ---- chips / badges ---- */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px;
+  border-radius: 99px; font-size: 11.5px; font-weight: 500;
+  background: var(--surface-2); color: var(--ink-soft);
+}
+.chip .dot { width: 7px; height: 7px; border-radius: 99px; background: currentColor; }
+.chip.good { background: var(--good-soft); color: var(--good); }
+.chip.warn { background: var(--warn-soft); color: var(--warn); }
+.chip.bad { background: var(--bad-soft); color: var(--bad); }
+
+/* fade/scale entrance for surfaces */
+@keyframes pop-in { from { opacity: 0; transform: translateY(6px) scale(0.99); } to { opacity: 1; transform: none; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+.pop { animation: pop-in var(--t-slow) var(--ease-out) both; }

@@ -14,6 +14,7 @@
     "@guide/engine": "workspace:*",
     "@guide/carto": "workspace:*",
     "@guide/press": "workspace:*",
+    "@guide/paint": "workspace:*",
     "@fastify/cookie": "^11.0.2",
     "@fastify/cors": "^11.0.1",
     "@fastify/multipart": "^9.0.3",

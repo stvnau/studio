@@ -1,0 +1,176 @@
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import type { EditorCtx } from './editor.js';
+import type { PagePreview } from '../api.js';
+import type { FrameOverride, Rect } from '@guide/shared';
+import { Icon } from '../icons.js';
+
+export function Canvas({ ctx }: { ctx: EditorCtx }) {
+  const { preview, view, setView, selection, select } = ctx;
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [fit, setFit] = useState(1);
+
+  const pages = preview?.pages ?? [];
+  const current = pages[Math.min(view.pageIndex, Math.max(0, pages.length - 1))];
+
+  // In spread mode, pair current with its neighbour to form left|right.
+  let shown: PagePreview[] = current ? [current] : [];
+  if (view.mode === 'spread' && current) {
+    const idx = pages.indexOf(current);
+    if (current.side === 'left' && pages[idx + 1]?.side === 'right') shown = [current, pages[idx + 1]!];
+    else if (current.side === 'right' && pages[idx - 1]?.side === 'left') shown = [pages[idx - 1]!, current];
+  }
+
+  // Fit-to-viewport base scale (then zoom multiplies).
+  useLayoutEffect(() => {
+    const el = scrollRef.current;
+    if (!el || !current) return;
+    const compute = () => {
+      const availW = el.clientWidth - 100;
+      const availH = el.clientHeight - 130;
+      const pageW = current.trim.w + (view.showBleed ? current.bleed * 2 : 0);
+      const pageH = current.trim.h + (view.showBleed ? current.bleed * 2 : 0);
+      const totalW = pageW * shown.length;
+      setFit(Math.max(0.2, Math.min(availH / pageH, availW / totalW, 1.6)));
+    };
+    compute();
+    const ro = new ResizeObserver(compute);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [current?.pageId, view.showBleed, view.mode, shown.length]);
+
+  const scale = fit * view.zoom;
+
+  const go = (delta: number) => {
+    const next = Math.min(pages.length - 1, Math.max(0, view.pageIndex + delta));
+    setView({ pageIndex: next });
+    select({ pageId: pages[next]?.pageId });
+  };
+
+  return (
+    <div className="canvas-stage">
+      <div className="canvas-toolbar">
+        <button className="iconbtn" onClick={() => go(-shown.length)} disabled={view.pageIndex <= 0} title="Previous"><Icon name="back" /></button>
+        <span className="zlabel">{current ? `${view.pageIndex + 1} / ${pages.length}` : '—'}</span>
+        <button className="iconbtn" onClick={() => go(shown.length)} disabled={view.pageIndex >= pages.length - 1} title="Next"><Icon name="chevron" /></button>
+        <span className="div" />
+        <button className="iconbtn" onClick={() => setView({ zoom: Math.max(0.3, view.zoom - 0.15) })} title="Zoom out"><Icon name="zoomOut" /></button>
+        <span className="zlabel">{Math.round(scale * 100)}%</span>
+        <button className="iconbtn" onClick={() => setView({ zoom: Math.min(3, view.zoom + 0.15) })} title="Zoom in"><Icon name="zoomIn" /></button>
+        <button className="iconbtn" onClick={() => setView({ zoom: 1 })} title="Fit"><Icon name="layout" /></button>
+      </div>
+
+      <div className="canvas-scroll" ref={scrollRef}>
+        {!current ? (
+          <div className="canvas-empty"><Icon name="layout" size={28} /><span>{preview ? 'No pages' : 'Composing…'}</span></div>
+        ) : (
+          <div className="canvas-pages" style={{ transform: `scale(1)` }}>
+            {shown.map((pg) => (
+              <PageView key={pg.pageId} ctx={ctx} page={pg} scale={scale}
+                offset={view.showBleed ? 0 : pg.bleed}
+                frames={Object.entries(preview!.frames).filter(([, f]) => f.pageId === pg.pageId)}
+                selection={selection} select={select} />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function PageView({ ctx, page, scale, offset, frames, selection, select }: {
+  ctx: EditorCtx; page: PagePreview; scale: number; offset: number;
+  frames: [string, { pageId: string; rect: Rect; kind: string }][];
+  selection: { frameId?: string; pageId?: string }; select: (s: { frameId?: string; pageId?: string }) => void;
+}) {
+  const hostRef = useRef<HTMLDivElement>(null);
+  const dispW = (page.trim.w + (offset ? 0 : page.bleed * 2)) * scale;
+  const dispH = (page.trim.h + (offset ? 0 : page.bleed * 2)) * scale;
+
+  useEffect(() => {
+    if (hostRef.current) hostRef.current.innerHTML = page.svg;
+  }, [page.svg]);
+
+  const overridesByFrame = new Map(ctx.edition.overrides.map((o) => [o.frame, o]));
+
+  return (
+    <div className="canvas-page" style={{ width: dispW, height: dispH }}>
+      <div className="page-caption">{page.pageId}{page.side === 'left' ? '  ·  verso' : '  ·  recto'}</div>
+      <div ref={hostRef} style={{ width: dispW, height: dispH }} />
+      <div className="sel-layer">
+        {frames.map(([id, f]) => (
+          <FrameHit key={id} ctx={ctx} frameId={id} rect={f.rect} kind={f.kind} scale={scale} offset={offset}
+            selected={selection.frameId === id} override={overridesByFrame.get(id)}
+            host={hostRef} select={() => select({ frameId: id, pageId: page.pageId })} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function FrameHit({ ctx, frameId, rect, kind, scale, offset, selected, override, host, select }: {
+  ctx: EditorCtx; frameId: string; rect: Rect; kind: string; scale: number; offset: number;
+  selected: boolean; override?: FrameOverride; host: React.RefObject<HTMLDivElement>; select: () => void;
+}) {
+  const left = (rect.x - offset) * scale;
+  const top = (rect.y - offset) * scale;
+  const w = rect.w * scale;
+  const h = rect.h * scale;
+  const [drag, setDrag] = useState(false);
+  const moved = !!override && (override.patch.x !== undefined || override.patch.y !== undefined);
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    if (!selected) { select(); return; }
+    e.preventDefault();
+    setDrag(true);
+    const hit = e.currentTarget as HTMLElement;
+    const sx = e.clientX, sy = e.clientY;
+    const svgGroup = host.current?.querySelector(`[data-frame="${cssEsc(frameId)}"]`) as SVGElement | null;
+    const baseX = rect.x, baseY = rect.y;
+
+    const onMove = (ev: MouseEvent) => {
+      const dx = (ev.clientX - sx) / scale;
+      const dy = (ev.clientY - sy) / scale;
+      if (svgGroup) svgGroup.setAttribute('transform', `translate(${dx} ${dy})`);
+      hit.style.transform = `translate(${dx * scale}px, ${dy * scale}px)`;
+    };
+    const onUp = (ev: MouseEvent) => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+      setDrag(false);
+      const dx = (ev.clientX - sx) / scale;
+      const dy = (ev.clientY - sy) / scale;
+      hit.style.transform = '';
+      if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
+      ctx.update((edn) => {
+        const existing = edn.overrides.find((o) => o.frame === frameId);
+        if (existing) {
+          existing.patch.x = (existing.patch.x ?? baseX) + dx;
+          existing.patch.y = (existing.patch.y ?? baseY) + dy;
+          existing.at = new Date().toISOString();
+        } else {
+          edn.overrides.push({
+            frame: frameId,
+            patch: { x: baseX + dx, y: baseY + dy, w: rect.w, h: rect.h },
+            base: { x: baseX, y: baseY, w: rect.w, h: rect.h },
+            at: new Date().toISOString(),
+          });
+        }
+      });
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  };
+
+  return (
+    <div className={`frame-hit ${selected ? 'sel' : ''} ${drag ? 'dragging' : ''} ${moved ? 'moved' : ''}`}
+      style={{ left, top, width: w, height: h }}
+      onMouseDown={onMouseDown}
+      onClick={(e) => { e.stopPropagation(); if (!selected) select(); }}>
+      <span className="htag">{kind}</span>
+    </div>
+  );
+}
+
+function cssEsc(s: string): string {
+  return s.replace(/"/g, '\\"');
+}

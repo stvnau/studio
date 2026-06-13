@@ -18,6 +18,7 @@ import { registerDigitalRoutes } from './routes/digital.js';
 import { registerEditionRoutes } from './routes/editions.js';
 import { registerExportRoutes } from './routes/export.js';
 import { registerFontRoutes } from './routes/fonts.js';
+import { registerPreviewRoutes } from './routes/preview.js';
 import './types.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -93,6 +94,7 @@ export async function createServer(opts: CreateServerOptions = {}): Promise<Fast
   registerEditionRoutes(app);
   registerAssetRoutes(app);
   registerFontRoutes(app);
+  registerPreviewRoutes(app);
   const exporter =
     typeof opts.exporter === 'function' ? opts.exporter(db, dataDir) : opts.exporter;
   registerExportRoutes(app, exporter);

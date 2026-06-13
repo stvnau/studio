@@ -1,3 +1,11 @@
 #!/usr/bin/env bash
 # Launch Guide Studio (API + studio dev server) and open the browser.
-cd "$(dirname "$0")" && exec node scripts/studio.mjs "$@"
+# Resolves its own location (even through a symlink) so it works from anywhere.
+SOURCE="${BASH_SOURCE[0]}"
+while [ -L "$SOURCE" ]; do
+  DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+cd "$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)" || exit 1
+exec node scripts/studio.mjs "$@"

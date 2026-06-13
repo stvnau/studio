@@ -1,0 +1,314 @@
+{
+  "hotel-pool": {
+    "width": 1800,
+    "height": 2400,
+    "focal": {
+      "x": 0.5,
+      "y": 0.55
+    },
+    "luma": {
+      "top": 0.77,
+      "bottom": 0.368,
+      "overall": 0.552
+    }
+  },
+  "hotel-bistro": {
+    "width": 1800,
+    "height": 2400,
+    "focal": {
+      "x": 0.5,
+      "y": 0.55
+    },
+    "luma": {
+      "top": 0.742,
+      "bottom": 0.31,
+      "overall": 0.542
+    }
+  },
+  "hotel-rooms": {
+    "width": 1800,
+    "height": 2400,
+    "focal": {
+      "x": 0.5,
+      "y": 0.42
+    },
+    "luma": {
+      "top": 0.703,
+      "bottom": 0.24,
+      "overall": 0.534
+    }
+  },
+  "hotel-lobby": {
+    "width": 1800,
+    "height": 2400,
+    "focal": {
+      "x": 0.5,
+      "y": 0.55
+    },
+    "luma": {
+      "top": 0.768,
+      "bottom": 0.372,
+      "overall": 0.596
+    }
+  },
+  "hotel-pier": {
+    "width": 1800,
+    "height": 2400,
+    "focal": {
+      "x": 0.5,
+      "y": 0.55
+    },
+    "luma": {
+      "top": 0.724,
+      "bottom": 0.265,
+      "overall": 0.529
+    }
+  },
+  "hotel-hero": {
+    "width": 2400,
+    "height": 3200,
+    "focal": {
+      "x": 0.5,
+      "y": 0.42
+    },
+    "luma": {
+      "top": 0.678,
+      "bottom": 0.192,
+      "overall": 0.47
+    }
+  },
+  "biz-luma": {
+    "width": 1800,
+    "height": 2400,
+    "focal": {
+      "x": 0.5,
+      "y": 0.55
+    },
+    "luma": {
+      "top": 0.754,
+      "bottom": 0.292,
+      "overall": 0.547
+    }
+  },
+  "biz-tidal": {
+    "width": 1800,
+    "height": 2400,
+    "focal": {
+      "x": 0.5,
+      "y": 0.42
+    },
+    "luma": {
+      "top": 0.704,
+      "bottom": 0.217,
+      "overall": 0.485
+    }
+  },
+  "biz-curlew": {
+    "width": 1800,
+    "height": 2400,
+    "focal": {
+      "x": 0.5,
+      "y": 0.55
+    },
+    "luma": {
+      "top": 0.777,
+      "bottom": 0.385,
+      "overall": 0.556
+    }
+  },
+  "biz-saltbird": {
+    "width": 1800,
+    "height": 2400,
+    "focal": {
+      "x": 0.5,
+      "y": 0.55
+    },
+    "luma": {
+      "top": 0.703,
+      "bottom": 0.194,
+      "overall": 0.475
+    }
+  },
+  "biz-noon": {
+    "width": 1800,
+    "height": 2400,
+    "focal": {
+      "x": 0.5,
+      "y": 0.42
+    },
+    "luma": {
+      "top": 0.702,
+      "bottom": 0.17,
+      "overall": 0.489
+    }
+  },
+  "biz-hearth": {
+    "width": 1800,
+    "height": 2400,
+    "focal": {
+      "x": 0.5,
+      "y": 0.55
+    },
+    "luma": {
+      "top": 0.753,
+      "bottom": 0.289,
+      "overall": 0.546
+    }
+  },
+  "biz-jetty": {
+    "width": 1800,
+    "height": 2400,
+    "focal": {
+      "x": 0.5,
+      "y": 0.55
+    },
+    "luma": {
+      "top": 0.709,
+      "bottom": 0.203,
+      "overall": 0.484
+    }
+  },
+  "biz-corner": {
+    "width": 1800,
+    "height": 2400,
+    "focal": {
+      "x": 0.5,
+      "y": 0.55
+    },
+    "luma": {
+      "top": 0.778,
+      "bottom": 0.381,
+      "overall": 0.574
+    }
+  },
+  "biz-seabaths": {
+    "width": 1800,
+    "height": 2400,
+    "focal": {
+      "x": 0.5,
+      "y": 0.55
+    },
+    "luma": {
+      "top": 0.728,
+      "bottom": 0.271,
+      "overall": 0.533
+    }
+  },
+  "biz-gallery": {
+    "width": 1800,
+    "height": 2400,
+    "focal": {
+      "x": 0.5,
+      "y": 0.55
+    },
+    "luma": {
+      "top": 0.762,
+      "bottom": 0.314,
+      "overall": 0.567
+    }
+  },
+  "biz-reserve": {
+    "width": 1800,
+    "height": 2400,
+    "focal": {
+      "x": 0.5,
+      "y": 0.42
+    },
+    "luma": {
+      "top": 0.733,
+      "bottom": 0.241,
+      "overall": 0.544
+    }
+  },
+  "biz-sail": {
+    "width": 1800,
+    "height": 2400,
+    "focal": {
+      "x": 0.5,
+      "y": 0.42
+    },
+    "luma": {
+      "top": 0.722,
+      "bottom": 0.195,
+      "overall": 0.479
+    }
+  },
+  "biz-studio": {
+    "width": 1800,
+    "height": 2400,
+    "focal": {
+      "x": 0.5,
+      "y": 0.55
+    },
+    "luma": {
+      "top": 0.776,
+      "bottom": 0.416,
+      "overall": 0.592
+    }
+  },
+  "biz-cinema": {
+    "width": 1800,
+    "height": 2400,
+    "focal": {
+      "x": 0.5,
+      "y": 0.55
+    },
+    "luma": {
+      "top": 0.728,
+      "bottom": 0.267,
+      "overall": 0.516
+    }
+  },
+  "biz-mercer": {
+    "width": 1800,
+    "height": 2400,
+    "focal": {
+      "x": 0.5,
+      "y": 0.55
+    },
+    "luma": {
+      "top": 0.776,
+      "bottom": 0.417,
+      "overall": 0.596
+    }
+  },
+  "biz-pages": {
+    "width": 1800,
+    "height": 2400,
+    "focal": {
+      "x": 0.5,
+      "y": 0.55
+    },
+    "luma": {
+      "top": 0.767,
+      "bottom": 0.319,
+      "overall": 0.577
+    }
+  },
+  "biz-grocer": {
+    "width": 1800,
+    "height": 2400,
+    "focal": {
+      "x": 0.5,
+      "y": 0.55
+    },
+    "luma": {
+      "top": 0.766,
+      "bottom": 0.352,
+      "overall": 0.546
+    }
+  },
+  "biz-forage": {
+    "width": 1800,
+    "height": 2400,
+    "focal": {
+      "x": 0.5,
+      "y": 0.55
+    },
+    "luma": {
+      "top": 0.728,
+      "bottom": 0.263,
+      "overall": 0.531
+    }
+  }
+}

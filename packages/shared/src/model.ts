@@ -178,6 +178,8 @@ export interface EditionSettings {
   trimWidthMm: number;
   trimHeightMm: number;
   bleedMm: number;
+  /** Page margins from the trim edges, in mm. Optional for legacy docs. */
+  margins?: { top: number; bottom: number; inner: number; outer: number };
   /** Baseline grid pitch in pt. */
   baselineGridPt: number;
   /** ICC profile for press output: 'builtin:guide-cmyk' or an asset id. */

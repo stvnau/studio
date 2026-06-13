@@ -16,6 +16,7 @@ export function Structure({ ctx }: { ctx: EditorCtx }) {
   const { edition, update, preview, selection, select } = ctx;
   const [dragPage, setDragPage] = useState<number | null>(null);
   const [overPage, setOverPage] = useState<number | null>(null);
+  const [addingPage, setAddingPage] = useState(false);
 
   const sectionTitle = (id: string) => edition.sections.find((s) => s.id === id)?.title ?? 'Section';
   const pageLabel = (p: PageSpec): string => {
@@ -53,6 +54,9 @@ export function Structure({ ctx }: { ctx: EditorCtx }) {
     });
   };
 
+  const removePage = (id: string) => update((e) => { e.pages = e.pages.filter((p) => p.id !== id); });
+  const addPage = (spec: PageSpec) => { update((e) => { e.pages.push(spec); }); setAddingPage(false); };
+
   const numbered = numberedListings(edition);
   const bizById = new Map(ctx.businesses.map((b) => [b.id, b]));
 
@@ -61,7 +65,10 @@ export function Structure({ ctx }: { ctx: EditorCtx }) {
       <div className="pane-scroll">
         {/* Pages */}
         <div className="pane-sec">
-          <div className="pane-sec-head"><h3>Pages</h3><span className="faint" style={{ fontSize: 11 }}>{edition.pages.length}</span></div>
+          <div className="pane-sec-head">
+            <h3>Pages</h3>
+            <button className="iconbtn" title="Add a page" style={{ width: 24, height: 24 }} onClick={() => setAddingPage(true)}><Icon name="plus" size={14} /></button>
+          </div>
           {edition.pages.map((p, i) => {
             const physIdx = physIndexOf.get(p.id);
             const on = selectedSpec === p.id;
@@ -82,6 +89,7 @@ export function Structure({ ctx }: { ctx: EditorCtx }) {
                 <span className="pico"><Icon name={PAGE_ICON[p.kind] ?? 'page'} size={14} /></span>
                 <span className="pname">{pageLabel(p)}</span>
                 <span className="pnum">{physIdx !== undefined ? physIdx + 1 : ''}</span>
+                <button className="premove" title="Remove page" onClick={(e) => { e.stopPropagation(); removePage(p.id); }}><Icon name="x" size={12} /></button>
               </div>
             );
           })}
@@ -98,6 +106,42 @@ export function Structure({ ctx }: { ctx: EditorCtx }) {
             );
           })}
         </div>
+      </div>
+      {addingPage && <AddPageModal edition={edition} onAdd={addPage} onClose={() => setAddingPage(false)} />}
+    </div>
+  );
+}
+
+function AddPageModal({ edition, onAdd, onClose }: { edition: import('@guide/shared').Edition; onAdd: (p: PageSpec) => void; onClose: () => void }) {
+  const nid = (k: string) => `p-${k}-${Math.random().toString(36).slice(2, 7)}`;
+  const blockIds = edition.hotel.infoBlocks.map((b) => b.id);
+  const sections = edition.sections;
+
+  const items: { label: string; icon: string; make: () => PageSpec }[] = [
+    { label: 'Welcome', icon: 'welcome', make: () => ({ id: nid('welcome'), kind: 'welcome' }) },
+    { label: 'Hotel information', icon: 'image', make: () => ({ id: nid('info'), kind: 'hotel-info', blockIds }) },
+    { label: 'Neighbourhood map', icon: 'map', make: () => ({ id: nid('map'), kind: 'map', spread: false }) },
+    { label: 'Your keys', icon: 'key', make: () => ({ id: nid('keys'), kind: 'keys' }) },
+    { label: 'Cover', icon: 'cover', make: () => ({ id: nid('cover'), kind: 'cover' }) },
+    { label: 'Back cover', icon: 'cover', make: () => ({ id: nid('back'), kind: 'back-cover' }) },
+    ...sections.map((s) => ({ label: `Divider · ${s.title}`, icon: 'divider', make: (): PageSpec => ({ id: nid('div'), kind: 'divider' as const, sectionId: s.id }) })),
+    ...sections.map((s) => ({ label: `Places · ${s.title}`, icon: 'list', make: (): PageSpec => ({ id: nid('list'), kind: 'listings' as const, sectionId: s.id }) })),
+  ];
+
+  return (
+    <div className="modal-veil" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-head"><h2>Add a page</h2><p>It’s appended to the end — drag it into place afterwards.</p></div>
+        <div className="modal-body">
+          <div className="addpage-grid">
+            {items.map((it, i) => (
+              <button key={i} className="addpage-item" onClick={() => onAdd(it.make())}>
+                <span className="pico"><Icon name={it.icon} size={15} /></span>{it.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="modal-foot"><button className="btn ghost" onClick={onClose}>Cancel</button></div>
       </div>
     </div>
   );

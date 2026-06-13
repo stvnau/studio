@@ -174,3 +174,19 @@
 .exp-item-text b { display: block; font-size: 13px; font-weight: 600; }
 .exp-item-text small { display: block; font-size: 11px; color: var(--ink-faint); }
 .exp-item-action a.btn { padding: 6px; }
+
+/* settings tab */
+.preset-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.set-static { margin-top: 12px; font-size: 12.5px; color: var(--ink-soft); }
+.set-static b { color: var(--ink); font-weight: 600; }
+.set-toggle { display: flex; align-items: center; gap: 9px; font-size: 13px; cursor: pointer; }
+.set-toggle input { width: 15px; height: 15px; accent-color: var(--accent); }
+
+/* page add/remove */
+.page-row .premove { opacity: 0; color: var(--ink-faint); display: grid; place-items: center; width: 18px; height: 18px; border-radius: 4px; border: 0; background: transparent; cursor: pointer; }
+.page-row:hover .premove { opacity: 1; }
+.page-row .premove:hover { background: var(--bad-soft); color: var(--bad); }
+.addpage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.addpage-item { display: flex; align-items: center; gap: 9px; padding: 10px; border: 1px solid var(--line); border-radius: var(--r-sm); cursor: pointer; font-size: 13px; transition: border-color var(--t), background var(--t); }
+.addpage-item:hover { border-color: var(--accent); background: var(--accent-wash); }
+.addpage-item .pico { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 6px; background: var(--surface-2); color: var(--ink-soft); flex: none; }

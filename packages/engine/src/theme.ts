@@ -96,7 +96,8 @@ function findFaceId(faces: FontFace[], family: string, weight: number, italic = 
 export function makeGeometry(settings: Edition['settings']): PageGeometry {
   const trim = { w: mm(settings.trimWidthMm), h: mm(settings.trimHeightMm) };
   const bleed = mm(settings.bleedMm);
-  const margins = { top: mm(12), bottom: mm(14), inner: mm(12), outer: mm(9) };
+  const mg = settings.margins ?? { top: 12, bottom: 14, inner: 12, outer: 9 };
+  const margins = { top: mm(mg.top), bottom: mm(mg.bottom), inner: mm(mg.inner), outer: mm(mg.outer) };
   return {
     trim,
     bleed,

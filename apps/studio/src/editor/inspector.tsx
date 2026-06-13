@@ -5,8 +5,8 @@ import { PT_PER_MM, ptToMm, worstSeverity } from '@guide/shared';
 import { Icon } from '../icons.js';
 
 export function Inspector({ ctx }: { ctx: EditorCtx }) {
-  const { preview, selection } = ctx;
-  const [tab, setTab] = useState<'props' | 'validate'>('props');
+  const { preview } = ctx;
+  const [tab, setTab] = useState<'props' | 'settings' | 'validate'>('props');
   const diags = preview?.diagnostics ?? [];
   const errors = diags.filter((d) => d.severity === 'error').length;
   const warns = diags.filter((d) => d.severity === 'warning').length;
@@ -15,7 +15,10 @@ export function Inspector({ ctx }: { ctx: EditorCtx }) {
     <div className="pane pane-right">
       <div className="insp-tabs">
         <button className={`insp-tab ${tab === 'props' ? 'on' : ''}`} onClick={() => setTab('props')}>
-          <Icon name="layout" size={14} /> Properties
+          <Icon name="layout" size={14} /> Element
+        </button>
+        <button className={`insp-tab ${tab === 'settings' ? 'on' : ''}`} onClick={() => setTab('settings')}>
+          <Icon name="bleed" size={14} /> Settings
         </button>
         <button className={`insp-tab ${tab === 'validate' ? 'on' : ''}`} onClick={() => setTab('validate')}>
           <Icon name="check" size={14} /> Validate
@@ -23,10 +26,111 @@ export function Inspector({ ctx }: { ctx: EditorCtx }) {
         </button>
       </div>
       <div className="pane-scroll" style={{ padding: 0 }}>
-        {tab === 'props' ? <Properties ctx={ctx} /> : <Validate ctx={ctx} />}
+        {tab === 'props' ? <Properties ctx={ctx} /> : tab === 'settings' ? <Settings ctx={ctx} /> : <Validate ctx={ctx} />}
       </div>
     </div>
   );
+}
+
+const TRIM_PRESETS = [
+  { label: 'Tall pocket', w: 100, h: 200 },
+  { label: 'A6', w: 105, h: 148 },
+  { label: 'A5', w: 148, h: 210 },
+  { label: 'DL', w: 99, h: 210 },
+];
+
+function Settings({ ctx }: { ctx: EditorCtx }) {
+  const { edition, update } = ctx;
+  const s = edition.settings;
+  const mg = s.margins ?? { top: 12, bottom: 14, inner: 12, outer: 9 };
+  const setS = (patch: Partial<typeof s>) => update((e) => { Object.assign(e.settings, patch); });
+  const setMargin = (k: 'top' | 'bottom' | 'inner' | 'outer', v: number) =>
+    update((e) => {
+      const m = { ...(e.settings.margins ?? { top: 12, bottom: 14, inner: 12, outer: 9 }) };
+      m[k] = v;
+      e.settings.margins = m;
+    });
+  const mapPage = edition.pages.find((p) => p.kind === 'map') as { kind: 'map'; spread: boolean } | undefined;
+  const setSpread = (spread: boolean) =>
+    update((e) => { const mp = e.pages.find((p) => p.kind === 'map'); if (mp && mp.kind === 'map') mp.spread = spread; });
+
+  return (
+    <>
+      <div className="insp-block">
+        <h4>Trim size</h4>
+        <div className="preset-row">
+          {TRIM_PRESETS.map((p) => (
+            <button key={p.label} className={`btn sm ${s.trimWidthMm === p.w && s.trimHeightMm === p.h ? 'primary' : ''}`}
+              onClick={() => setS({ trimWidthMm: p.w, trimHeightMm: p.h })}>{p.label}</button>
+          ))}
+        </div>
+        <div className="coord-grid" style={{ marginTop: 10 }}>
+          <Coord label="Width (mm)" value={s.trimWidthMm} onCommit={(v) => setS({ trimWidthMm: clamp(v, 40, 330) })} />
+          <Coord label="Height (mm)" value={s.trimHeightMm} onCommit={(v) => setS({ trimHeightMm: clamp(v, 40, 480) })} />
+        </div>
+      </div>
+
+      <div className="insp-block">
+        <h4>Margins (mm)</h4>
+        <div className="coord-grid">
+          <Coord label="Top" value={mg.top} onCommit={(v) => setMargin('top', clamp(v, 0, 60))} />
+          <Coord label="Bottom" value={mg.bottom} onCommit={(v) => setMargin('bottom', clamp(v, 0, 60))} />
+          <Coord label="Inner (spine)" value={mg.inner} onCommit={(v) => setMargin('inner', clamp(v, 0, 60))} />
+          <Coord label="Outer (fore-edge)" value={mg.outer} onCommit={(v) => setMargin('outer', clamp(v, 0, 60))} />
+        </div>
+      </div>
+
+      <div className="insp-block">
+        <h4>Prepress</h4>
+        <div className="coord-grid">
+          <Coord label="Bleed (mm)" value={s.bleedMm} onCommit={(v) => setS({ bleedMm: clamp(v, 0, 12) })} />
+          <Coord label="Grid (pt)" value={s.baselineGridPt} onCommit={(v) => setS({ baselineGridPt: clamp(v, 6, 24) })} />
+          <Coord label="Ink limit (%)" value={s.inkLimit} onCommit={(v) => setS({ inkLimit: clamp(v, 200, 360) })} />
+        </div>
+        <div className="set-static">ICC profile · <b>Guide Studio Coated CMYK</b> (built-in)</div>
+      </div>
+
+      <div className="insp-block">
+        <h4>Spot colour</h4>
+        <label className="set-toggle">
+          <input type="checkbox" checked={!!s.spotColor}
+            onChange={(e) => setS({ spotColor: e.target.checked ? { name: 'Brand', altHex: edition.hotel.brand.primary } : null })} />
+          Render a brand spot plate
+        </label>
+        {s.spotColor && (
+          <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <TextField label="Plate name" value={s.spotColor.name} onCommit={(v) => setS({ spotColor: { name: v || 'Brand', altHex: s.spotColor!.altHex } })} />
+            <div className="field">
+              <label>Fallback colour</label>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <input type="color" value={s.spotColor.altHex} onChange={(e) => setS({ spotColor: { name: s.spotColor!.name, altHex: e.target.value } })}
+                  style={{ width: 34, height: 32, padding: 0, border: '1px solid var(--line-strong)', borderRadius: 6, background: 'none' }} />
+                <input className="input" value={s.spotColor.altHex} onChange={(e) => setS({ spotColor: { name: s.spotColor!.name, altHex: e.target.value } })} />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="insp-block">
+        <h4>Edition</h4>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <TextField label="Publisher (cover “By …”)" value={s.publisher} onCommit={(v) => setS({ publisher: v })} />
+          <TextField label="Digital base URL (QR target)" value={s.digitalBaseUrl} onCommit={(v) => setS({ digitalBaseUrl: v })} />
+        </div>
+        {mapPage && (
+          <label className="set-toggle" style={{ marginTop: 14 }}>
+            <input type="checkbox" checked={mapPage.spread} onChange={(e) => setSpread(e.target.checked)} />
+            Map as a two-page spread
+          </label>
+        )}
+      </div>
+    </>
+  );
+}
+
+function clamp(v: number, lo: number, hi: number): number {
+  return Number.isNaN(v) ? lo : Math.min(hi, Math.max(lo, v));
 }
 
 function Properties({ ctx }: { ctx: EditorCtx }) {

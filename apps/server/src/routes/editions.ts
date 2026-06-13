@@ -70,6 +70,7 @@ const DEFAULT_SETTINGS = {
   trimWidthMm: 105,
   trimHeightMm: 174,
   bleedMm: 3,
+  margins: { top: 12, bottom: 14, inner: 12, outer: 9 },
   baselineGridPt: 12,
   iccProfile: 'builtin:guide-cmyk',
   spotColor: null,

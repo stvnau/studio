@@ -25,8 +25,10 @@ export function Canvas({ ctx }: { ctx: EditorCtx }) {
     const el = scrollRef.current;
     if (!el || !current) return;
     const compute = () => {
-      const availW = el.clientWidth - 100;
-      const availH = el.clientHeight - 130;
+      // offsetWidth/Height include the scrollbar gutter, so the fit doesn't
+      // jitter when a zoom-induced scrollbar appears or disappears.
+      const availW = el.offsetWidth - 100;
+      const availH = el.offsetHeight - 130;
       const pageW = current.trim.w + (view.showBleed ? current.bleed * 2 : 0);
       const pageH = current.trim.h + (view.showBleed ? current.bleed * 2 : 0);
       const totalW = pageW * shown.length;
@@ -63,7 +65,7 @@ export function Canvas({ ctx }: { ctx: EditorCtx }) {
         {!current ? (
           <div className="canvas-empty"><Icon name="layout" size={28} /><span>{preview ? 'No pages' : 'Composing…'}</span></div>
         ) : (
-          <div className="canvas-pages" style={{ transform: `scale(1)` }}>
+          <div className="canvas-pages">
             {shown.map((pg) => (
               <PageView key={pg.pageId} ctx={ctx} page={pg} scale={scale}
                 offset={view.showBleed ? 0 : pg.bleed}

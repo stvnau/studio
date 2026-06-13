@@ -87,10 +87,12 @@
 .canvas-toolbar .zlabel { font-size: 11.5px; min-width: 38px; text-align: center; font-variant-numeric: tabular-nums; color: #b6b1a7; }
 .canvas-toolbar .div { width: 1px; height: 18px; background: rgba(255,255,255,0.12); margin: 0 2px; }
 
-.canvas-scroll { flex: 1; overflow: auto; display: grid; place-items: center; padding: 70px 40px; }
-.canvas-pages { display: flex; gap: 2px; align-items: flex-start; transition: transform var(--t) var(--ease-out); }
-.canvas-page { position: relative; background: #fff; box-shadow: var(--shadow-page); border-radius: 1px; }
-.canvas-page svg { display: block; }
+.canvas-scroll { flex: 1; overflow: auto; display: flex; scrollbar-gutter: stable; }
+/* margin:auto centres the page when it fits and still lets you scroll to every
+   edge when zoomed in (unlike place-items:center, which clips the overflow). */
+.canvas-pages { margin: auto; display: flex; gap: 2px; align-items: flex-start; padding: 58px 44px; }
+.canvas-page { position: relative; background: #fff; box-shadow: var(--shadow-page); border-radius: 1px; flex: none; }
+.canvas-page svg { display: block; width: 100%; height: 100%; }
 .page-caption { position: absolute; top: -26px; left: 0; right: 0; text-align: center; color: rgba(255,255,255,0.45); font-size: 11px; letter-spacing: 0.04em; }
 
 /* selection overlay */

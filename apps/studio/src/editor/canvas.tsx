@@ -40,7 +40,56 @@ export function Canvas({ ctx }: { ctx: EditorCtx }) {
     return () => ro.disconnect();
   }, [current?.pageId, view.showBleed, view.mode, shown.length]);
 
+  // scale = fit × zoom. zoom 1 (= "100%") means the page is fitted to the
+  // viewport — that is the default and what the readout shows.
   const scale = fit * view.zoom;
+
+  // Latest values for the imperatively-attached (non-passive) wheel listener,
+  // plus a pending cursor anchor applied after the page resizes.
+  const zoomRef = useRef(view.zoom);
+  zoomRef.current = view.zoom;
+  const anchor = useRef<{ ratio: number; ox: number; oy: number; sl: number; st: number } | null>(null);
+
+  const applyZoom = (target: number, clientX?: number, clientY?: number) => {
+    const el = scrollRef.current;
+    const oldZoom = zoomRef.current;
+    const newZoom = clampZoom(target);
+    if (newZoom === oldZoom) return;
+    if (el) {
+      const rect = el.getBoundingClientRect();
+      const ox = (clientX ?? rect.left + rect.width / 2) - rect.left;
+      const oy = (clientY ?? rect.top + rect.height / 2) - rect.top;
+      anchor.current = { ratio: newZoom / oldZoom, ox, oy, sl: el.scrollLeft, st: el.scrollTop };
+    }
+    setView({ zoom: newZoom });
+  };
+
+  // Trackpad pinch (which the browser delivers as wheel + ctrlKey) and
+  // ⌘/Ctrl-scroll zoom toward the cursor. Plain two-finger scroll pans.
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      if (!(e.ctrlKey || e.metaKey)) return;
+      e.preventDefault();
+      const dy = Math.max(-30, Math.min(30, e.deltaY));
+      applyZoom(zoomRef.current * Math.exp(-dy * 0.01), e.clientX, e.clientY);
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+    // applyZoom reads live values via refs, so this attaches once.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Keep the anchor point under the cursor after a zoom resizes the page.
+  useLayoutEffect(() => {
+    const el = scrollRef.current;
+    const a = anchor.current;
+    if (!el || !a) return;
+    anchor.current = null;
+    el.scrollLeft = Math.max(0, (a.sl + a.ox) * a.ratio - a.ox);
+    el.scrollTop = Math.max(0, (a.st + a.oy) * a.ratio - a.oy);
+  }, [scale]);
 
   const go = (delta: number) => {
     const next = Math.min(pages.length - 1, Math.max(0, view.pageIndex + delta));
@@ -55,10 +104,10 @@ export function Canvas({ ctx }: { ctx: EditorCtx }) {
         <span className="zlabel">{current ? `${view.pageIndex + 1} / ${pages.length}` : '—'}</span>
         <button className="iconbtn" onClick={() => go(shown.length)} disabled={view.pageIndex >= pages.length - 1} title="Next"><Icon name="chevron" /></button>
         <span className="div" />
-        <button className="iconbtn" onClick={() => setView({ zoom: Math.max(0.3, view.zoom - 0.15) })} title="Zoom out"><Icon name="zoomOut" /></button>
-        <span className="zlabel">{Math.round(scale * 100)}%</span>
-        <button className="iconbtn" onClick={() => setView({ zoom: Math.min(3, view.zoom + 0.15) })} title="Zoom in"><Icon name="zoomIn" /></button>
-        <button className="iconbtn" onClick={() => setView({ zoom: 1 })} title="Fit"><Icon name="layout" /></button>
+        <button className="iconbtn" onClick={() => applyZoom(view.zoom / 1.2)} title="Zoom out"><Icon name="zoomOut" /></button>
+        <button className="zlabel zbtn" onClick={() => setView({ zoom: 1 })} title="Reset to fit (100%)">{Math.round(view.zoom * 100)}%</button>
+        <button className="iconbtn" onClick={() => applyZoom(view.zoom * 1.2)} title="Zoom in"><Icon name="zoomIn" /></button>
+        <button className="iconbtn" onClick={() => setView({ zoom: 1 })} title="Fit to view"><Icon name="layout" /></button>
       </div>
 
       <div className="canvas-scroll" ref={scrollRef}>
@@ -175,4 +224,8 @@ function FrameHit({ ctx, frameId, rect, kind, scale, offset, selected, override,
 
 function cssEsc(s: string): string {
   return s.replace(/"/g, '\\"');
+}
+
+function clampZoom(z: number): number {
+  return Math.max(0.25, Math.min(6, z));
 }

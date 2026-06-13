@@ -85,6 +85,8 @@
 .canvas-toolbar .iconbtn:hover { background: rgba(255,255,255,0.1); color: #fff; }
 .canvas-toolbar .iconbtn.on { background: var(--accent); color: #fff; }
 .canvas-toolbar .zlabel { font-size: 11.5px; min-width: 38px; text-align: center; font-variant-numeric: tabular-nums; color: #b6b1a7; }
+.canvas-toolbar .zbtn { border: 0; background: transparent; cursor: pointer; padding: 4px 4px; border-radius: 6px; }
+.canvas-toolbar .zbtn:hover { background: rgba(255,255,255,0.1); color: #fff; }
 .canvas-toolbar .div { width: 1px; height: 18px; background: rgba(255,255,255,0.12); margin: 0 2px; }
 
 .canvas-scroll { flex: 1; overflow: auto; display: flex; scrollbar-gutter: stable; }

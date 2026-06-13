@@ -6,11 +6,12 @@
  *
  *   pnpm studio            (or)   ./studio
  *
+ * On launch it fast-forward-pulls the latest code (skip with STUDIO_NO_PULL=1).
  * Env overrides: PORT (api, 5170), STUDIO_PORT (5173), GUIDE_DATA_DIR (./data).
  */
 
 import { spawn, spawnSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -33,6 +34,39 @@ const pipe = (child, tag, color) => {
     });
   }
 };
+
+// 0. Pull the latest code (fast-forward only, so it never clobbers local work).
+//    Failures (offline, diverged, dirty tree) are non-fatal — we launch what's
+//    on disk. Skip with STUDIO_NO_PULL=1.
+if (process.env.STUDIO_NO_PULL !== '1') {
+  const git = (args) => spawnSync('git', args, { cwd: ROOT, encoding: 'utf8' });
+  const branch = git(['rev-parse', '--abbrev-ref', 'HEAD']).stdout?.trim();
+  if (branch && branch !== 'HEAD') {
+    log('git', C.sys, `checking ${branch} for updates…`);
+    const head = () => git(['rev-parse', 'HEAD']).stdout?.trim() ?? '';
+    const lockfile = path.join(ROOT, 'pnpm-lock.yaml');
+    const readLock = () => (existsSync(lockfile) ? readFileSync(lockfile, 'utf8') : '');
+    const before = head();
+    const lockBefore = readLock();
+    const pull = git(['pull', '--ff-only']);
+    if (pull.status === 0) {
+      const after = head();
+      if (after && after !== before) {
+        log('git', C.sys, `updated ${before.slice(0, 7)} → ${after.slice(0, 7)}`);
+        if (readLock() !== lockBefore) {
+          log('git', C.sys, 'dependencies changed — installing…');
+          const r = spawnSync('pnpm', ['install'], { cwd: ROOT, stdio: 'inherit' });
+          if (r.status !== 0) log('git', C.sys, 'pnpm install failed — continuing with current deps');
+        }
+      } else {
+        log('git', C.sys, 'already up to date');
+      }
+    } else {
+      const why = (pull.stderr || pull.stdout || '').trim().split('\n')[0] || 'offline or local changes';
+      log('git', C.sys, `skipped pull (${why}) — launching current code`);
+    }
+  }
+}
 
 // 1. Seed the demo on first run (no db yet).
 if (!existsSync(path.join(DATA_DIR, 'guide.db'))) {

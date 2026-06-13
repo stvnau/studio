@@ -4,7 +4,9 @@
   "version": "0.1.0",
   "description": "Guide Studio — assemble and edit press-ready pocket guides",
   "scripts": {
-    "dev": "pnpm --filter @guide/server dev",
+    "studio": "node scripts/studio.mjs",
+    "dev": "node scripts/studio.mjs",
+    "seed": "node --import tsx apps/server/src/seed.ts fixtures/demo/seed.json",
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck"

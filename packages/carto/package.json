@@ -14,5 +14,13 @@
   "dependencies": {
     "@guide/shared": "workspace:*",
     "rbush": "^4.0.1"
+  },
+  "devDependencies": {
+    "@guide/engine": "workspace:*",
+    "@guide/fonts": "workspace:*",
+    "@guide/paint": "workspace:*",
+    "@resvg/resvg-js": "^2.6.2",
+    "vitest": "^3.1.0",
+    "tsx": "^4.19.0"
   }
 }

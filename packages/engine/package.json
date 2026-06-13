@@ -21,6 +21,9 @@
   "devDependencies": {
     "@guide/fonts": "workspace:*",
     "@types/fontkit": "^2.0.9",
-    "@types/qrcode": "^1.5.5"
+    "@types/qrcode": "^1.5.5",
+    "@guide/paint": "workspace:*",
+    "@resvg/resvg-js": "^2.6.2",
+    "vitest": "^3.1.0"
   }
 }

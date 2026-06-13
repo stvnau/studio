@@ -1,0 +1,24 @@
+{
+  "name": "@guide/fonts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./node": "./src/node.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@guide/shared": "workspace:*",
+    "@expo-google-fonts/fraunces": "^0.4.1",
+    "@expo-google-fonts/source-serif-4": "^0.4.1",
+    "@expo-google-fonts/archivo": "^0.4.1",
+    "@expo-google-fonts/archivo-narrow": "^0.4.1",
+    "@expo-google-fonts/instrument-sans": "^0.4.1",
+    "@expo-google-fonts/newsreader": "^0.4.1",
+    "@expo-google-fonts/ibm-plex-mono": "^0.4.1"
+  }
+}

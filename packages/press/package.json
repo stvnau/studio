@@ -1,0 +1,25 @@
+{
+  "name": "@guide/press",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@guide/shared": "workspace:*",
+    "fontkit": "^2.0.4",
+    "pdf-lib": "^1.17.1",
+    "sharp": "^0.35.1"
+  },
+  "devDependencies": {
+    "@guide/fonts": "workspace:*",
+    "pdfjs-dist": "^5.4.0",
+    "@napi-rs/canvas": "^0.1.80"
+  }
+}

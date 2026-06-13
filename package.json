@@ -1,0 +1,31 @@
+{
+  "name": "guide-studio",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Guide Studio — assemble and edit press-ready pocket guides",
+  "scripts": {
+    "dev": "pnpm --filter @guide/server dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "typescript": "^5.8.0",
+    "tsx": "^4.19.0",
+    "vitest": "^3.1.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "better-sqlite3",
+      "sharp",
+      "@napi-rs/canvas",
+      "esbuild",
+      "@resvg/resvg-js"
+    ]
+  }
+}

@@ -85,6 +85,12 @@ importers:
         specifier: workspace:*
         version: link:../shared
 
+  packages/paint:
+    dependencies:
+      '@guide/shared':
+        specifier: workspace:*
+        version: link:../shared
+
   packages/press:
     dependencies:
       '@guide/shared':

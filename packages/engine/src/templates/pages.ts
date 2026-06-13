@@ -159,19 +159,23 @@ export function welcomePage(b: PageBuilder, ed: Edition, pageNumber: number): vo
     y += 16;
   }
 
-  // Guide intro + QR side by side at the foot.
-  const qr = 52;
+  // Guide intro + QR, anchored toward the foot so the page reads composed —
+  // the airy space sits in the middle, not stranded at the bottom. A thin rule
+  // marks the block.
+  const qr = 56;
+  const blockY = Math.max(y + 14, c.y + c.h - qr - 8);
+  hairline(b, c.x, blockY - 12, c.w, t.colors.inkFaint, 0.5);
   if (w.guideIntro) {
     b.text(
       `welcome:guide-intro`,
-      { x: c.x, y, w: c.w - qr - 16, h: c.y + c.h - y - 8 },
+      { x: c.x, y: blockY, w: c.w - qr - 18, h: qr },
       [P(t.styles.bodyRagged, w.guideIntro, { size: 8.8, leading: 12.5 })],
-      { copyfit: { minScale: 0.8, maxScale: 1 } },
+      { copyfit: { minScale: 0.8, maxScale: 1 }, valign: 'center' },
     );
   }
   b.qr(`welcome:qr`, ed.settings.digitalBaseUrl || ed.hotel.url || '', {
     x: c.x + c.w - qr,
-    y,
+    y: blockY,
     w: qr,
     h: qr,
   });
@@ -213,26 +217,32 @@ export function hotelInfoPage(
 
 function drawInfoBand(b: PageBuilder, rect: Rect, block: HotelInfoBlock, flip: boolean): void {
   const t = b.theme;
-  const imgH = Math.min(rect.h * 0.52, rect.w * 0.62);
+  // A lone block on a page becomes a full feature: a tall hero image and a
+  // larger, more generous body so the page reads composed, never top-heavy.
+  // Stacked bands keep a calmer half-height image. The ratio scales with the
+  // band so the image always fills its share (no fixed width cap).
+  const feature = rect.h > 360;
+  const imgH = rect.h * (feature ? 0.62 : 0.5);
   const imgRect: Rect = { x: rect.x, y: rect.y, w: rect.w, h: imgH };
-  b.image(`info:${block.id}:image`, block.imageId, imgRect, { radius: 2, scrim: 'bottom', scrimAlpha: 0.32 });
+  b.image(`info:${block.id}:image`, block.imageId, imgRect, { radius: 2, scrim: 'bottom', scrimAlpha: 0.34 });
 
   // Title sits over the foot of the image for an editorial, magazine feel.
-  b.text(`info:${block.id}:title`, { x: rect.x + 12, y: rect.y + imgH - 30, w: rect.w - 24, h: 26 }, [
-    P(t.styles.display(17), block.title, { color: t.colors.paper, leading: 18 }),
+  const titleSize = feature ? 22 : 17;
+  b.text(`info:${block.id}:title`, { x: rect.x + 12, y: rect.y + imgH - titleSize - 12, w: rect.w - 24, h: titleSize + 8 }, [
+    P(t.styles.display(titleSize), block.title, { color: t.colors.paper, leading: titleSize + 1 }),
   ]);
 
-  let ty = rect.y + imgH + 10;
+  let ty = rect.y + imgH + (feature ? 16 : 10);
   if (block.kicker) {
     b.text(`info:${block.id}:kicker`, { x: rect.x, y: ty, w: rect.w, h: 10 }, [
       P(t.styles.kicker, block.kicker, { color: t.colors.secondary }),
     ]);
-    ty += 12;
+    ty += feature ? 15 : 12;
   }
   b.text(
     `info:${block.id}:body`,
     { x: rect.x, y: ty, w: rect.w, h: rect.y + rect.h - ty },
-    [P(t.styles.bodyRagged, block.body)],
+    [P(t.styles.bodyRagged, block.body, feature ? { size: 9.6, leading: 14.5 } : {})],
     { copyfit: { minScale: 0.78, maxScale: 1 } },
   );
   // suppress unused warning for flip (kept for future alternating layouts)
@@ -302,17 +312,22 @@ export function keysPage(b: PageBuilder, ed: Edition, pageNumber: number): void 
     y += (note?.used.h ?? 28) + 20;
   }
 
-  // Two keycard holders — die-cut slots carrying the hotel mark.
+  // Two keycard holders — die-cut slots carrying the hotel mark, sized to fill
+  // the space below the note and centred so the page reads composed.
   const holders = 2;
-  const slotH = 58;
   const slotGap = 22;
+  const availH = c.y + c.h - 18 - y;
+  const slotH = Math.max(58, Math.min(118, (availH - slotGap * (holders - 1)) / holders));
+  const blockH = slotH * holders + slotGap * (holders - 1);
+  const startY = y + Math.max(0, (availH - blockH) / 2);
   for (let i = 0; i < holders; i++) {
-    const sy = y + i * (slotH + slotGap);
+    const sy = startY + i * (slotH + slotGap);
     const slot: Rect = { x: c.x, y: sy, w: c.w, h: slotH };
     // Holder field.
     panel(b, slot, t.colors.wash, 4);
-    // Die-cut line for the card pocket (dashed = cut/score guidance).
-    const cut: Rect = { x: slot.x + 10, y: slot.y + 12, w: slot.w - 20, h: slotH - 24 };
+    // Die-cut line for the card pocket (dashed = cut/score guidance). Leaves a
+    // clear strip at the foot for the room-key label.
+    const cut: Rect = { x: slot.x + 10, y: slot.y + 11, w: slot.w - 20, h: slotH - 32 };
     b.add({
       t: 'path',
       d: roundedRectPath(cut, 3),
@@ -324,7 +339,7 @@ export function keysPage(b: PageBuilder, ed: Edition, pageNumber: number): void 
     b.text(`keys:mark:${i}`, { x: cut.x, y: cut.y + cut.h / 2 + 1, w: cut.w, h: 16 }, [
       P(t.styles.display(13), ed.hotel.wordmark ?? ed.hotel.name, { color: t.colors.tier.full, align: 'center' }),
     ]);
-    b.text(`keys:label:${i}`, { x: cut.x, y: slot.y + slotH - 12, w: cut.w, h: 10 }, [
+    b.text(`keys:label:${i}`, { x: cut.x, y: slot.y + slotH - 13, w: cut.w, h: 11 }, [
       P(t.styles.folio, `Room key ${i + 1}`, { align: 'center', color: t.colors.inkSoft }),
     ]);
   }

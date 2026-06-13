@@ -33,7 +33,7 @@ export function Inspector({ ctx }: { ctx: EditorCtx }) {
 }
 
 const TRIM_PRESETS = [
-  { label: 'Tall pocket', w: 100, h: 200 },
+  { label: 'Pocket', w: 101.5, h: 185 },
   { label: 'A6', w: 105, h: 148 },
   { label: 'A5', w: 148, h: 210 },
   { label: 'DL', w: 99, h: 210 },

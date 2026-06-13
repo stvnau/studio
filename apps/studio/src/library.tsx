@@ -160,8 +160,8 @@ function starterEdition(name: string, hotelName: string, brand: { primary: strin
       keysNote: 'Slip your room cards into the holders below. They carry the hotel mark, so they’re easy to find at the bottom of a bag.',
     },
     settings: {
-      trimWidthMm: 100, trimHeightMm: 200, bleedMm: 3,
-      margins: { top: 12, bottom: 14, inner: 12, outer: 9 },
+      trimWidthMm: 101.5, trimHeightMm: 185, bleedMm: 3,
+      margins: { top: 5, bottom: 5, inner: 5, outer: 5 },
       baselineGridPt: 12,
       iccProfile: 'builtin:guide-cmyk', spotColor: null, inkLimit: 300,
       digitalBaseUrl: '', publisher: 'Atelier North',

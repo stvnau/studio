@@ -186,10 +186,19 @@ function layoutAtScale(spec: TextFrameSpec, env: TextEnv, scale: number): Attemp
       cursor += (spec.paragraphs[line.para]!.style.spaceBefore ?? 0) * scale;
     }
 
-    // Candidate baseline.
-    let baseline = firstInCol ? cursor + line.ascent : cursor + leading;
-    if (para.snapToGrid && grid) {
-      baseline = snapBaseline(baseline, gridOrigin, grid);
+    // Candidate baseline. On a baseline grid we advance whole grid steps from
+    // the previous baseline — `round(leading/grid)` (at least one). This keeps
+    // a consistent rhythm and avoids the failure where a leading just larger
+    // than the grid pitch snaps to the *next* line and doubles the spacing.
+    let baseline: number;
+    if (firstInCol) {
+      baseline = cursor + line.ascent;
+      if (para.snapToGrid && grid) baseline = snapBaseline(baseline, gridOrigin, grid);
+    } else if (para.snapToGrid && grid) {
+      const steps = Math.max(1, Math.round(leading / grid));
+      baseline = cursor + steps * grid;
+    } else {
+      baseline = cursor + leading;
     }
 
     // Does it fit this column?

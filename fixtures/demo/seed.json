@@ -360,8 +360,8 @@
         "heroImageId": "hotel-hero"
       },
       "settings": {
-        "trimWidthMm": 100,
-        "trimHeightMm": 200,
+        "trimWidthMm": 101.5,
+        "trimHeightMm": 185,
         "bleedMm": 3,
         "baselineGridPt": 11.5,
         "iccProfile": "builtin:guide-cmyk",
@@ -371,7 +371,13 @@
         },
         "inkLimit": 300,
         "digitalBaseUrl": "http://localhost:5170/g/ed-sandling",
-        "publisher": "Atelier North"
+        "publisher": "Atelier North",
+        "margins": {
+          "top": 5,
+          "bottom": 5,
+          "inner": 5,
+          "outer": 5
+        }
       },
       "sections": [
         {

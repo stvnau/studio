@@ -1,0 +1,1071 @@
+{
+  "businesses": [
+    {
+      "id": "b-luma",
+      "name": "Lúma",
+      "category": "Dining room",
+      "oneLiner": "Harbour-side dining room where the day’s catch sets the menu.",
+      "description": "Lúma keeps things close: fish from the co-op two doors down, vegetables from growers up the river, a wine list that rarely leaves the state. The room is all pale timber and low evening light, with the harbour going gold outside. Book the early sitting and stay for the last ferry.",
+      "address": "2 Marine Parade",
+      "lat": -33.8441,
+      "lng": 151.2778,
+      "website": "https://luma.example.com",
+      "instagram": "@luma.pelicanpoint",
+      "phone": "(02) 9301 4410",
+      "images": [
+        "biz-luma"
+      ],
+      "suburb": "Pelican Point",
+      "qrTarget": "https://luma.example.com"
+    },
+    {
+      "id": "b-tidal",
+      "name": "Tidal",
+      "category": "Modern Australian",
+      "oneLiner": "Season-led plates in a converted boat shed.",
+      "description": "A small kitchen with serious intent — short menu, open fire, and a shifting cast of local seafood. The shed doors roll up in summer and the whole room becomes a deck.",
+      "address": "18 Wharf Road",
+      "lat": -33.8454,
+      "lng": 151.2801,
+      "website": "https://tidal.example.com",
+      "instagram": "@tidal.shed",
+      "images": [
+        "biz-tidal"
+      ],
+      "suburb": "Pelican Point",
+      "qrTarget": "https://tidal.example.com"
+    },
+    {
+      "id": "b-curlew",
+      "name": "The Curlew",
+      "category": "Café",
+      "oneLiner": "The neighbourhood’s morning room — pastry first, then the papers.",
+      "description": "Named for the street and loud with regulars by eight. House-laminated croissants, a single-origin rotation, and window seats made for slow starts.",
+      "address": "41 Curlew Street",
+      "lat": -33.8411,
+      "lng": 151.2834,
+      "instagram": "@thecurlew",
+      "images": [
+        "biz-curlew"
+      ],
+      "suburb": "Pelican Point"
+    },
+    {
+      "id": "b-saltbird",
+      "name": "Saltbird",
+      "category": "Wine bar",
+      "oneLiner": "Forty wines by the glass, anchovies to match.",
+      "address": "7 Pelican Parade",
+      "lat": -33.8418,
+      "lng": 151.2812,
+      "description": "A slip of a bar with a long marble counter and a list that rewards curiosity.",
+      "instagram": "@saltbird.bar",
+      "images": [
+        "biz-saltbird"
+      ],
+      "suburb": "Pelican Point"
+    },
+    {
+      "id": "b-noon",
+      "name": "Noon",
+      "category": "Bakery",
+      "oneLiner": "Wood-fired sourdough until it sells out — usually by noon.",
+      "address": "12 Banksia Avenue",
+      "lat": -33.8399,
+      "lng": 151.2826,
+      "description": "Two ovens, one bench, no compromises. Saturday’s fig loaf is a local event.",
+      "images": [
+        "biz-noon"
+      ],
+      "suburb": "Pelican Point"
+    },
+    {
+      "id": "b-hearth",
+      "name": "Hearth",
+      "category": "Wood-fired",
+      "oneLiner": "Everything through the coals, even dessert.",
+      "address": "88 Harbour View Road",
+      "lat": -33.838699999999996,
+      "lng": 151.28060000000002,
+      "description": "A hillside room built around a four-metre fireplace. Come hungry.",
+      "phone": "(02) 9301 7782",
+      "images": [
+        "biz-hearth"
+      ],
+      "suburb": "Pelican Point"
+    },
+    {
+      "id": "b-jetty",
+      "name": "Jetty Provedore",
+      "category": "Provedore",
+      "oneLiner": "Picnic supplies, harbour-front — ask for the smoked trout.",
+      "address": "1 Wharf Road",
+      "lat": -33.844899999999996,
+      "lng": 151.2794,
+      "description": "",
+      "images": [
+        "biz-jetty"
+      ],
+      "suburb": "Pelican Point"
+    },
+    {
+      "id": "b-corner",
+      "name": "Corner Green",
+      "category": "Kiosk",
+      "oneLiner": "Espresso and juices at the reserve gates.",
+      "address": "2A Seagrass Lane",
+      "lat": -33.8406,
+      "lng": 151.27890000000002,
+      "description": "",
+      "images": [
+        "biz-corner"
+      ],
+      "suburb": "Pelican Point"
+    },
+    {
+      "id": "b-seabaths",
+      "name": "Pelican Sea Baths",
+      "category": "Ocean baths",
+      "oneLiner": "Saltwater laps in a 1923 pavilion, sunrise to dusk.",
+      "description": "The point’s great civic luxury: a fifty-metre tidal pool held off the harbour by a century of sandstone. Swim at dawn when the surface is glass, or come at golden hour with everyone else and call it culture. Towels and a very good kiosk on the deck.",
+      "address": "Marine Parade, south end",
+      "lat": -33.8461,
+      "lng": 151.28310000000002,
+      "website": "https://seabaths.example.com",
+      "images": [
+        "biz-seabaths"
+      ],
+      "suburb": "Pelican Point",
+      "qrTarget": "https://seabaths.example.com"
+    },
+    {
+      "id": "b-gallery",
+      "name": "Gallery Q",
+      "category": "Gallery",
+      "oneLiner": "Contemporary work in a former chandlery; new hang monthly.",
+      "description": "Three rooms of mostly local, mostly fearless work, with a sculpture yard out the back. The opening nights — first Friday of the month — are the neighbourhood at its best.",
+      "address": "5 Norfolk Street",
+      "lat": -33.8426,
+      "lng": 151.2844,
+      "website": "https://galleryq.example.com",
+      "instagram": "@gallery.q",
+      "images": [
+        "biz-gallery"
+      ],
+      "suburb": "Pelican Point",
+      "qrTarget": "https://galleryq.example.com"
+    },
+    {
+      "id": "b-cinema",
+      "name": "The Odeon",
+      "category": "Cinema",
+      "oneLiner": "Single screen, red curtains, choc-tops — since 1948.",
+      "description": "A lovingly kept picture palace running new releases, restorations and a Sunday matinee of someone’s favourite film. Arrive early for the organ.",
+      "address": "60 Pelican Parade",
+      "lat": -33.840199999999996,
+      "lng": 151.28410000000002,
+      "phone": "(02) 9301 2236",
+      "images": [
+        "biz-cinema"
+      ],
+      "suburb": "Pelican Point"
+    },
+    {
+      "id": "b-sail",
+      "name": "Windward Sailing",
+      "category": "Sailing",
+      "oneLiner": "Twilight sails on a classic gaff cutter, BYO nerve.",
+      "address": "Pelican Point Wharf",
+      "lat": -33.8456,
+      "lng": 151.27870000000001,
+      "description": "Two hours on the harbour with a crew who grew up on it.",
+      "website": "https://windward.example.com",
+      "images": [
+        "biz-sail"
+      ],
+      "suburb": "Pelican Point",
+      "qrTarget": "https://windward.example.com"
+    },
+    {
+      "id": "b-walk",
+      "name": "Headland Loop",
+      "category": "Walk",
+      "oneLiner": "Forty minutes of harbour, heath and white cockatoos.",
+      "address": "Starts at Pelican Point Reserve",
+      "lat": -33.8393,
+      "lng": 151.2784,
+      "description": "The classic circuit: reserve, clifftop, beach, flat white.",
+      "images": [
+        "biz-reserve"
+      ],
+      "suburb": "Pelican Point"
+    },
+    {
+      "id": "b-studio",
+      "name": "Marlowe Studio",
+      "category": "Workshop",
+      "oneLiner": "Drop-in printmaking, Thursdays and Saturdays.",
+      "address": "3 Fig Tree Lane",
+      "lat": -33.8414,
+      "lng": 151.2853,
+      "description": "",
+      "images": [
+        "biz-studio"
+      ],
+      "suburb": "Pelican Point"
+    },
+    {
+      "id": "b-mercer",
+      "name": "Mercer & Co",
+      "category": "Homewares",
+      "oneLiner": "Considered objects for considered homes.",
+      "description": "Ceramics thrown two suburbs away, linen in colours the harbour wears, and a backroom of vintage Danish lighting that rewards a slow look.",
+      "address": "22 Pelican Parade",
+      "lat": -33.841,
+      "lng": 151.28240000000002,
+      "instagram": "@mercerandco",
+      "images": [
+        "biz-mercer"
+      ],
+      "suburb": "Pelican Point"
+    },
+    {
+      "id": "b-pages",
+      "name": "Pages of Pelican",
+      "category": "Bookshop",
+      "oneLiner": "Small, sharp bookshop with a ferocious fiction wall.",
+      "address": "39 Curlew Street",
+      "lat": -33.8407,
+      "lng": 151.2837,
+      "description": "Staff picks you can trust and a poetry shelf that fights above its weight.",
+      "images": [
+        "biz-pages"
+      ],
+      "suburb": "Pelican Point"
+    },
+    {
+      "id": "b-grocer",
+      "name": "The Common Grocer",
+      "category": "Grocer",
+      "oneLiner": "Local growers’ produce and the point’s best cheese counter.",
+      "address": "15 Banksia Avenue",
+      "lat": -33.8396,
+      "lng": 151.28300000000002,
+      "description": "",
+      "images": [
+        "biz-grocer"
+      ],
+      "suburb": "Pelican Point"
+    },
+    {
+      "id": "b-forage",
+      "name": "Forage",
+      "category": "Florist",
+      "oneLiner": "Natives and sea-heath, bunched while you wait.",
+      "address": "4 Tern Alley",
+      "lat": -33.8431,
+      "lng": 151.2803,
+      "description": "",
+      "images": [
+        "biz-forage"
+      ],
+      "suburb": "Pelican Point"
+    }
+  ],
+  "editions": [
+    {
+      "id": "ed-sandling",
+      "name": "Pelican Point · No. 1",
+      "hotel": {
+        "name": "The Sandling Hotel",
+        "wordmark": "The Sandling",
+        "tagline": "Pelican Point, Sydney",
+        "url": "thesandling.example.com",
+        "phone": "(02) 9301 4000",
+        "address": "1 Marine Parade, Pelican Point",
+        "brand": {
+          "primary": "#1B423B",
+          "secondary": "#B65C3F",
+          "accent": "#C99B5F"
+        },
+        "stayEssentials": [
+          {
+            "label": "Wi-Fi",
+            "value": "Sandling Guest · no password"
+          },
+          {
+            "label": "Breakfast",
+            "value": "Sable, 6.30–10.30 daily"
+          },
+          {
+            "label": "Pool Club",
+            "value": "Level 3 · 6am–10pm"
+          },
+          {
+            "label": "Front desk",
+            "value": "Dial 9 · staffed all hours"
+          },
+          {
+            "label": "Checkout",
+            "value": "11am, late by arrangement"
+          },
+          {
+            "label": "Parking",
+            "value": "Valet from the Wharf Road door"
+          }
+        ],
+        "welcome": {
+          "heading": "It’s good to have you here.",
+          "intro": "The Sandling sits where the point meets the harbour, and this little book is how we share the neighbourhood we love. Everything in it is somewhere we actually go.",
+          "guideIntro": "Numbers beside each place match the pins on the map at the back. Distances are short — almost everything here is a walk."
+        },
+        "infoBlocks": [
+          {
+            "id": "ib-pool",
+            "title": "The Pool Club",
+            "kicker": "Level 3 · 6am–10pm",
+            "body": "Twenty-five metres of warm saltwater above the rooftops, with the harbour for a horizon. Towels, cold things, and shade that moves with the afternoon. Guests only, always quiet.",
+            "imageId": "hotel-pool"
+          },
+          {
+            "id": "ib-bistro",
+            "title": "Sable, our bistro",
+            "kicker": "Ground floor · lunch & dinner",
+            "body": "A short, confident menu built on the same growers and fishers our neighbours use. The bar keeps a Sandling-only vermouth; ask for it over ice with a twist.",
+            "imageId": "hotel-bistro"
+          },
+          {
+            "id": "ib-rooms",
+            "title": "Your room",
+            "kicker": "The small print, kindly",
+            "body": "The windows open — properly. Blackout blinds are behind the sheers, the minibar is stocked from the grocer on Banksia Avenue, and the phone by the bed reaches a person, not a menu.",
+            "imageId": "hotel-rooms"
+          },
+          {
+            "id": "ib-lobby",
+            "title": "The lobby & beyond",
+            "kicker": "Always open",
+            "body": "Papers and strong coffee from six, a record player with the good speakers after dark. Umbrellas, beach towels and bicycles live by the Wharf Road door — take what you need.",
+            "imageId": "hotel-lobby"
+          },
+          {
+            "id": "ib-pier",
+            "title": "The pier shuttle",
+            "kicker": "Hourly · from the wharf",
+            "body": "Our skiff runs guests across to the city side on the hour through the evening. It’s slower than the ferry and better in every other way.",
+            "imageId": "hotel-pier"
+          }
+        ],
+        "keysNote": "Two cards live in this pocket. They open your room, the Pool Club, and the Wharf Road door after dark. Keep the book; we’d love the cards back.",
+        "heroImageId": "hotel-hero"
+      },
+      "settings": {
+        "trimWidthMm": 100,
+        "trimHeightMm": 200,
+        "bleedMm": 3,
+        "baselineGridPt": 11.5,
+        "iccProfile": "builtin:guide-cmyk",
+        "spotColor": {
+          "name": "Sandling Deep",
+          "altHex": "#1B423B"
+        },
+        "inkLimit": 300,
+        "digitalBaseUrl": "http://localhost:5170/g/ed-sandling",
+        "publisher": "Atelier North"
+      },
+      "sections": [
+        {
+          "id": "eat",
+          "title": "Eat & Drink",
+          "short": "Eat"
+        },
+        {
+          "id": "do",
+          "title": "Things to Do",
+          "short": "Do"
+        },
+        {
+          "id": "shop",
+          "title": "Shop & Keep",
+          "short": "Shop"
+        }
+      ],
+      "listings": [
+        {
+          "id": "l-luma",
+          "businessId": "b-luma",
+          "sectionId": "eat",
+          "tier": "full"
+        },
+        {
+          "id": "l-tidal",
+          "businessId": "b-tidal",
+          "sectionId": "eat",
+          "tier": "half"
+        },
+        {
+          "id": "l-curlew",
+          "businessId": "b-curlew",
+          "sectionId": "eat",
+          "tier": "half"
+        },
+        {
+          "id": "l-saltbird",
+          "businessId": "b-saltbird",
+          "sectionId": "eat",
+          "tier": "quarter"
+        },
+        {
+          "id": "l-noon",
+          "businessId": "b-noon",
+          "sectionId": "eat",
+          "tier": "quarter"
+        },
+        {
+          "id": "l-hearth",
+          "businessId": "b-hearth",
+          "sectionId": "eat",
+          "tier": "quarter"
+        },
+        {
+          "id": "l-jetty",
+          "businessId": "b-jetty",
+          "sectionId": "eat",
+          "tier": "list"
+        },
+        {
+          "id": "l-corner",
+          "businessId": "b-corner",
+          "sectionId": "eat",
+          "tier": "list"
+        },
+        {
+          "id": "l-seabaths",
+          "businessId": "b-seabaths",
+          "sectionId": "do",
+          "tier": "full"
+        },
+        {
+          "id": "l-gallery",
+          "businessId": "b-gallery",
+          "sectionId": "do",
+          "tier": "half"
+        },
+        {
+          "id": "l-cinema",
+          "businessId": "b-cinema",
+          "sectionId": "do",
+          "tier": "half"
+        },
+        {
+          "id": "l-sail",
+          "businessId": "b-sail",
+          "sectionId": "do",
+          "tier": "quarter"
+        },
+        {
+          "id": "l-walk",
+          "businessId": "b-walk",
+          "sectionId": "do",
+          "tier": "quarter"
+        },
+        {
+          "id": "l-studio",
+          "businessId": "b-studio",
+          "sectionId": "do",
+          "tier": "list"
+        },
+        {
+          "id": "l-mercer",
+          "businessId": "b-mercer",
+          "sectionId": "shop",
+          "tier": "half"
+        },
+        {
+          "id": "l-pages",
+          "businessId": "b-pages",
+          "sectionId": "shop",
+          "tier": "quarter"
+        },
+        {
+          "id": "l-grocer",
+          "businessId": "b-grocer",
+          "sectionId": "shop",
+          "tier": "list"
+        },
+        {
+          "id": "l-forage",
+          "businessId": "b-forage",
+          "sectionId": "shop",
+          "tier": "list"
+        }
+      ],
+      "listingOrder": [
+        "l-luma",
+        "l-tidal",
+        "l-curlew",
+        "l-saltbird",
+        "l-noon",
+        "l-hearth",
+        "l-jetty",
+        "l-corner",
+        "l-seabaths",
+        "l-gallery",
+        "l-cinema",
+        "l-sail",
+        "l-walk",
+        "l-studio",
+        "l-mercer",
+        "l-pages",
+        "l-grocer",
+        "l-forage"
+      ],
+      "pages": [
+        {
+          "id": "p-cover",
+          "kind": "cover"
+        },
+        {
+          "id": "p-welcome",
+          "kind": "welcome"
+        },
+        {
+          "id": "p-info-1",
+          "kind": "hotel-info",
+          "blockIds": [
+            "ib-pool"
+          ]
+        },
+        {
+          "id": "p-info-2",
+          "kind": "hotel-info",
+          "blockIds": [
+            "ib-bistro",
+            "ib-rooms"
+          ]
+        },
+        {
+          "id": "p-info-3",
+          "kind": "hotel-info",
+          "blockIds": [
+            "ib-lobby",
+            "ib-pier"
+          ]
+        },
+        {
+          "id": "p-div-eat",
+          "kind": "divider",
+          "sectionId": "eat"
+        },
+        {
+          "id": "p-list-eat",
+          "kind": "listings",
+          "sectionId": "eat"
+        },
+        {
+          "id": "p-div-do",
+          "kind": "divider",
+          "sectionId": "do"
+        },
+        {
+          "id": "p-list-do",
+          "kind": "listings",
+          "sectionId": "do"
+        },
+        {
+          "id": "p-div-shop",
+          "kind": "divider",
+          "sectionId": "shop"
+        },
+        {
+          "id": "p-list-shop",
+          "kind": "listings",
+          "sectionId": "shop"
+        },
+        {
+          "id": "p-map",
+          "kind": "map",
+          "spread": true
+        },
+        {
+          "id": "p-keys",
+          "kind": "keys"
+        },
+        {
+          "id": "p-back",
+          "kind": "back-cover"
+        }
+      ],
+      "map": {
+        "bbox": {
+          "minLat": -33.8466,
+          "minLng": 151.2762,
+          "maxLat": -33.8374,
+          "maxLng": 151.2878
+        },
+        "source": "fixture:pelican-point",
+        "tint": 1
+      },
+      "overrides": [],
+      "updatedAt": "2026-06-01T00:00:00.000Z"
+    }
+  ],
+  "assets": [
+    {
+      "id": "hotel-pool",
+      "file": "images/hotel-pool.jpg",
+      "meta": {
+        "id": "hotel-pool",
+        "filename": "hotel-pool.jpg",
+        "width": 1800,
+        "height": 2400,
+        "focal": {
+          "x": 0.5,
+          "y": 0.55
+        },
+        "luma": {
+          "top": 0.77,
+          "bottom": 0.368,
+          "overall": 0.552
+        }
+      }
+    },
+    {
+      "id": "hotel-bistro",
+      "file": "images/hotel-bistro.jpg",
+      "meta": {
+        "id": "hotel-bistro",
+        "filename": "hotel-bistro.jpg",
+        "width": 1800,
+        "height": 2400,
+        "focal": {
+          "x": 0.5,
+          "y": 0.55
+        },
+        "luma": {
+          "top": 0.742,
+          "bottom": 0.31,
+          "overall": 0.542
+        }
+      }
+    },
+    {
+      "id": "hotel-rooms",
+      "file": "images/hotel-rooms.jpg",
+      "meta": {
+        "id": "hotel-rooms",
+        "filename": "hotel-rooms.jpg",
+        "width": 1800,
+        "height": 2400,
+        "focal": {
+          "x": 0.5,
+          "y": 0.42
+        },
+        "luma": {
+          "top": 0.703,
+          "bottom": 0.24,
+          "overall": 0.534
+        }
+      }
+    },
+    {
+      "id": "hotel-lobby",
+      "file": "images/hotel-lobby.jpg",
+      "meta": {
+        "id": "hotel-lobby",
+        "filename": "hotel-lobby.jpg",
+        "width": 1800,
+        "height": 2400,
+        "focal": {
+          "x": 0.5,
+          "y": 0.55
+        },
+        "luma": {
+          "top": 0.768,
+          "bottom": 0.372,
+          "overall": 0.596
+        }
+      }
+    },
+    {
+      "id": "hotel-pier",
+      "file": "images/hotel-pier.jpg",
+      "meta": {
+        "id": "hotel-pier",
+        "filename": "hotel-pier.jpg",
+        "width": 1800,
+        "height": 2400,
+        "focal": {
+          "x": 0.5,
+          "y": 0.55
+        },
+        "luma": {
+          "top": 0.724,
+          "bottom": 0.265,
+          "overall": 0.529
+        }
+      }
+    },
+    {
+      "id": "hotel-hero",
+      "file": "images/hotel-hero.jpg",
+      "meta": {
+        "id": "hotel-hero",
+        "filename": "hotel-hero.jpg",
+        "width": 2400,
+        "height": 3200,
+        "focal": {
+          "x": 0.5,
+          "y": 0.42
+        },
+        "luma": {
+          "top": 0.678,
+          "bottom": 0.192,
+          "overall": 0.47
+        }
+      }
+    },
+    {
+      "id": "biz-luma",
+      "file": "images/biz-luma.jpg",
+      "meta": {
+        "id": "biz-luma",
+        "filename": "biz-luma.jpg",
+        "width": 1800,
+        "height": 2400,
+        "focal": {
+          "x": 0.5,
+          "y": 0.55
+        },
+        "luma": {
+          "top": 0.754,
+          "bottom": 0.292,
+          "overall": 0.547
+        }
+      }
+    },
+    {
+      "id": "biz-tidal",
+      "file": "images/biz-tidal.jpg",
+      "meta": {
+        "id": "biz-tidal",
+        "filename": "biz-tidal.jpg",
+        "width": 1800,
+        "height": 2400,
+        "focal": {
+          "x": 0.5,
+          "y": 0.42
+        },
+        "luma": {
+          "top": 0.704,
+          "bottom": 0.217,
+          "overall": 0.485
+        }
+      }
+    },
+    {
+      "id": "biz-curlew",
+      "file": "images/biz-curlew.jpg",
+      "meta": {
+        "id": "biz-curlew",
+        "filename": "biz-curlew.jpg",
+        "width": 1800,
+        "height": 2400,
+        "focal": {
+          "x": 0.5,
+          "y": 0.55
+        },
+        "luma": {
+          "top": 0.777,
+          "bottom": 0.385,
+          "overall": 0.556
+        }
+      }
+    },
+    {
+      "id": "biz-saltbird",
+      "file": "images/biz-saltbird.jpg",
+      "meta": {
+        "id": "biz-saltbird",
+        "filename": "biz-saltbird.jpg",
+        "width": 1800,
+        "height": 2400,
+        "focal": {
+          "x": 0.5,
+          "y": 0.55
+        },
+        "luma": {
+          "top": 0.703,
+          "bottom": 0.194,
+          "overall": 0.475
+        }
+      }
+    },
+    {
+      "id": "biz-noon",
+      "file": "images/biz-noon.jpg",
+      "meta": {
+        "id": "biz-noon",
+        "filename": "biz-noon.jpg",
+        "width": 1800,
+        "height": 2400,
+        "focal": {
+          "x": 0.5,
+          "y": 0.42
+        },
+        "luma": {
+          "top": 0.702,
+          "bottom": 0.17,
+          "overall": 0.489
+        }
+      }
+    },
+    {
+      "id": "biz-hearth",
+      "file": "images/biz-hearth.jpg",
+      "meta": {
+        "id": "biz-hearth",
+        "filename": "biz-hearth.jpg",
+        "width": 1800,
+        "height": 2400,
+        "focal": {
+          "x": 0.5,
+          "y": 0.55
+        },
+        "luma": {
+          "top": 0.753,
+          "bottom": 0.289,
+          "overall": 0.546
+        }
+      }
+    },
+    {
+      "id": "biz-jetty",
+      "file": "images/biz-jetty.jpg",
+      "meta": {
+        "id": "biz-jetty",
+        "filename": "biz-jetty.jpg",
+        "width": 1800,
+        "height": 2400,
+        "focal": {
+          "x": 0.5,
+          "y": 0.55
+        },
+        "luma": {
+          "top": 0.709,
+          "bottom": 0.203,
+          "overall": 0.484
+        }
+      }
+    },
+    {
+      "id": "biz-corner",
+      "file": "images/biz-corner.jpg",
+      "meta": {
+        "id": "biz-corner",
+        "filename": "biz-corner.jpg",
+        "width": 1800,
+        "height": 2400,
+        "focal": {
+          "x": 0.5,
+          "y": 0.55
+        },
+        "luma": {
+          "top": 0.778,
+          "bottom": 0.381,
+          "overall": 0.574
+        }
+      }
+    },
+    {
+      "id": "biz-seabaths",
+      "file": "images/biz-seabaths.jpg",
+      "meta": {
+        "id": "biz-seabaths",
+        "filename": "biz-seabaths.jpg",
+        "width": 1800,
+        "height": 2400,
+        "focal": {
+          "x": 0.5,
+          "y": 0.55
+        },
+        "luma": {
+          "top": 0.728,
+          "bottom": 0.271,
+          "overall": 0.533
+        }
+      }
+    },
+    {
+      "id": "biz-gallery",
+      "file": "images/biz-gallery.jpg",
+      "meta": {
+        "id": "biz-gallery",
+        "filename": "biz-gallery.jpg",
+        "width": 1800,
+        "height": 2400,
+        "focal": {
+          "x": 0.5,
+          "y": 0.55
+        },
+        "luma": {
+          "top": 0.762,
+          "bottom": 0.314,
+          "overall": 0.567
+        }
+      }
+    },
+    {
+      "id": "biz-reserve",
+      "file": "images/biz-reserve.jpg",
+      "meta": {
+        "id": "biz-reserve",
+        "filename": "biz-reserve.jpg",
+        "width": 1800,
+        "height": 2400,
+        "focal": {
+          "x": 0.5,
+          "y": 0.42
+        },
+        "luma": {
+          "top": 0.733,
+          "bottom": 0.241,
+          "overall": 0.544
+        }
+      }
+    },
+    {
+      "id": "biz-sail",
+      "file": "images/biz-sail.jpg",
+      "meta": {
+        "id": "biz-sail",
+        "filename": "biz-sail.jpg",
+        "width": 1800,
+        "height": 2400,
+        "focal": {
+          "x": 0.5,
+          "y": 0.42
+        },
+        "luma": {
+          "top": 0.722,
+          "bottom": 0.195,
+          "overall": 0.479
+        }
+      }
+    },
+    {
+      "id": "biz-studio",
+      "file": "images/biz-studio.jpg",
+      "meta": {
+        "id": "biz-studio",
+        "filename": "biz-studio.jpg",
+        "width": 1800,
+        "height": 2400,
+        "focal": {
+          "x": 0.5,
+          "y": 0.55
+        },
+        "luma": {
+          "top": 0.776,
+          "bottom": 0.416,
+          "overall": 0.592
+        }
+      }
+    },
+    {
+      "id": "biz-cinema",
+      "file": "images/biz-cinema.jpg",
+      "meta": {
+        "id": "biz-cinema",
+        "filename": "biz-cinema.jpg",
+        "width": 1800,
+        "height": 2400,
+        "focal": {
+          "x": 0.5,
+          "y": 0.55
+        },
+        "luma": {
+          "top": 0.728,
+          "bottom": 0.267,
+          "overall": 0.516
+        }
+      }
+    },
+    {
+      "id": "biz-mercer",
+      "file": "images/biz-mercer.jpg",
+      "meta": {
+        "id": "biz-mercer",
+        "filename": "biz-mercer.jpg",
+        "width": 1800,
+        "height": 2400,
+        "focal": {
+          "x": 0.5,
+          "y": 0.55
+        },
+        "luma": {
+          "top": 0.776,
+          "bottom": 0.417,
+          "overall": 0.596
+        }
+      }
+    },
+    {
+      "id": "biz-pages",
+      "file": "images/biz-pages.jpg",
+      "meta": {
+        "id": "biz-pages",
+        "filename": "biz-pages.jpg",
+        "width": 1800,
+        "height": 2400,
+        "focal": {
+          "x": 0.5,
+          "y": 0.55
+        },
+        "luma": {
+          "top": 0.767,
+          "bottom": 0.319,
+          "overall": 0.577
+        }
+      }
+    },
+    {
+      "id": "biz-grocer",
+      "file": "images/biz-grocer.jpg",
+      "meta": {
+        "id": "biz-grocer",
+        "filename": "biz-grocer.jpg",
+        "width": 1800,
+        "height": 2400,
+        "focal": {
+          "x": 0.5,
+          "y": 0.55
+        },
+        "luma": {
+          "top": 0.766,
+          "bottom": 0.352,
+          "overall": 0.546
+        }
+      }
+    },
+    {
+      "id": "biz-forage",
+      "file": "images/biz-forage.jpg",
+      "meta": {
+        "id": "biz-forage",
+        "filename": "biz-forage.jpg",
+        "width": 1800,
+        "height": 2400,
+        "focal": {
+          "x": 0.5,
+          "y": 0.55
+        },
+        "luma": {
+          "top": 0.728,
+          "bottom": 0.263,
+          "overall": 0.531
+        }
+      }
+    }
+  ]
+}

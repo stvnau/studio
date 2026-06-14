@@ -14,7 +14,7 @@ import {
   type Section,
 } from '@guide/shared';
 import type { PageBuilder } from '../builder.js';
-import { P, fullBleed, hairline, folio, panel } from './helpers.js';
+import { P, fullBleed, hairline, folio, panel, HEAD_BAND, FOLIO_BAND } from './helpers.js';
 
 /* ------------------------------------------------------------------ */
 /* cover                                                               */
@@ -161,9 +161,9 @@ export function welcomePage(b: PageBuilder, ed: Edition, pageNumber: number): vo
 
   // Guide intro + QR, anchored toward the foot so the page reads composed —
   // the airy space sits in the middle, not stranded at the bottom. A thin rule
-  // marks the block.
+  // marks the block. Kept clear of the folio band.
   const qr = 56;
-  const blockY = Math.max(y + 14, c.y + c.h - qr - 8);
+  const blockY = Math.max(y + 14, c.y + c.h - qr - FOLIO_BAND - 6);
   hairline(b, c.x, blockY - 12, c.w, t.colors.inkFaint, 0.5);
   if (w.guideIntro) {
     b.text(
@@ -196,15 +196,18 @@ export function hotelInfoPage(
   const t = b.theme;
   const c = t.geo.content(b.side);
 
-  b.text(`info:runhead:${b.pageId}`, { x: c.x, y: c.y - 13, w: c.w, h: 10 }, [
+  // Running head inside the top margin band.
+  b.text(`info:runhead:${b.pageId}`, { x: c.x, y: c.y, w: c.w, h: 11 }, [
     P(t.styles.folio, 'The Hotel', { color: t.colors.secondary, align: b.side === 'right' ? 'left' : 'right' }),
   ]);
-  hairline(b, c.x, c.y - 6, c.w, t.colors.inkFaint, 0.5);
+  hairline(b, c.x, c.y + HEAD_BAND - 6, c.w, t.colors.inkFaint, 0.5);
 
   const n = Math.max(1, blocks.length);
   const gap = 18;
-  const bandH = (c.h - gap * (n - 1)) / n;
-  let y = c.y;
+  const bodyTop = c.y + HEAD_BAND;
+  const bodyH = c.h - HEAD_BAND - FOLIO_BAND;
+  const bandH = (bodyH - gap * (n - 1)) / n;
+  let y = bodyTop;
   let flip = false;
   for (const block of blocks) {
     drawInfoBand(b, { x: c.x, y, w: c.w, h: bandH }, block, flip);
@@ -316,7 +319,7 @@ export function keysPage(b: PageBuilder, ed: Edition, pageNumber: number): void 
   // the space below the note and centred so the page reads composed.
   const holders = 2;
   const slotGap = 22;
-  const availH = c.y + c.h - 18 - y;
+  const availH = c.y + c.h - FOLIO_BAND - 6 - y;
   const slotH = Math.max(58, Math.min(118, (availH - slotGap * (holders - 1)) / holders));
   const blockH = slotH * holders + slotGap * (holders - 1);
   const startY = y + Math.max(0, (availH - blockH) / 2);

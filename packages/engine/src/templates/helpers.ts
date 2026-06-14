@@ -91,37 +91,51 @@ export function numberBadge(
   );
 }
 
-/** Running head: section short title at the outer top, with a hairline. */
+/**
+ * Page furniture bands, reserved INSIDE the content box (i.e. within the page
+ * margins) so the running head and folio never sit in the margin / off the
+ * safe area. Body layout subtracts these from the content rect.
+ */
+export const HEAD_BAND = 16; // pt at the content top for a running head
+export const FOLIO_BAND = 13; // pt at the content bottom for the page number
+
+/** The body rect available to a template, after reserving furniture bands. */
+export function bodyRect(b: PageBuilder, opts: { head?: boolean; folio?: boolean } = {}): Rect {
+  const c = b.theme.geo.content(b.side);
+  const top = opts.head ? HEAD_BAND : 0;
+  const bottom = opts.folio ? FOLIO_BAND : 0;
+  return { x: c.x, y: c.y + top, w: c.w, h: c.h - top - bottom };
+}
+
+/** Running head: section title at the top of the content box, with a hairline. */
 export function runningHead(b: PageBuilder, label: string): void {
   const t = b.theme;
   const c = t.geo.content(b.side);
-  const y = c.y - t.geo.baselineGrid * 0.8;
   b.text(
     `runhead:${b.pageId}`,
-    { x: c.x, y: y - 8, w: c.w, h: 10 },
+    { x: c.x, y: c.y, w: c.w, h: 11 },
     [P(t.styles.folio, label, { color: t.colors.secondary, align: b.side === 'right' ? 'left' : 'right' })],
-    { valign: 'bottom' },
+    { valign: 'top' },
   );
-  hairline(b, c.x, c.y - 6, c.w, t.colors.inkFaint, 0.5);
+  hairline(b, c.x, c.y + HEAD_BAND - 6, c.w, t.colors.inkFaint, 0.5);
 }
 
-/** Folio at the foot: page number on the outer edge, wordmark on the inner. */
+/** Folio at the foot, inside the content box: page number outer, wordmark inner. */
 export function folio(b: PageBuilder, pageNumber: number, wordmark: string): void {
   const t = b.theme;
-  const trim = t.geo.trimOrigin;
-  const yy = trim.y + t.geo.trim.h - t.geo.margins.bottom * 0.5;
   const c = t.geo.content(b.side);
+  const yy = c.y + c.h - FOLIO_BAND;
   const numAlign = b.side === 'right' ? 'right' : 'left';
   const markAlign = b.side === 'right' ? 'left' : 'right';
   b.text(
     `folio:${b.pageId}`,
-    { x: c.x, y: yy - 6, w: c.w, h: 9 },
+    { x: c.x, y: yy, w: c.w, h: FOLIO_BAND },
     [P(t.styles.folio, String(pageNumber), { align: numAlign })],
     { valign: 'center' },
   );
   b.text(
     `folio-mark:${b.pageId}`,
-    { x: c.x, y: yy - 6, w: c.w, h: 9 },
+    { x: c.x, y: yy, w: c.w, h: FOLIO_BAND },
     [P(t.styles.folio, wordmark, { align: markAlign, color: t.colors.inkFaint })],
     { valign: 'center' },
   );

@@ -37,7 +37,7 @@ import {
   keysPage,
 } from './templates/pages.js';
 import { paginateSection, drawListingBlocks, type PlacedListing } from './templates/listings.js';
-import { resolveListing, folio, runningHead } from './templates/helpers.js';
+import { resolveListing, folio, runningHead, bodyRect, HEAD_BAND, FOLIO_BAND } from './templates/helpers.js';
 import { buildMapEnv, drawMapNotice } from './templates/map.js';
 
 interface PhysicalPage {
@@ -122,7 +122,9 @@ export async function compileEdition(edition: Edition, env: CompileEnv): Promise
       }
       case 'listings': {
         const items = listingsForSection(edition, env, spec.sectionId, numberByListing);
-        const contentH = theme.geo.content('right').h;
+        // Body height = content box minus the running-head and folio bands, so
+        // pagination only fills the area inside the margins.
+        const contentH = theme.geo.content('right').h - HEAD_BAND - FOLIO_BAND;
         const pages = paginateSection(items, contentH);
         for (const blocks of pages) {
           for (const bl of blocks) if ('item' in bl) renderedListings.add(bl.item.r.id);
@@ -136,7 +138,7 @@ export async function compileEdition(edition: Edition, env: CompileEnv): Promise
             side: 'right',
             draw: (b) => {
               if (sect) runningHead(b, sect.section.title);
-              drawListingBlocks(b, blocks, b.theme.geo.content(b.side));
+              drawListingBlocks(b, blocks, bodyRect(b, { head: true, folio: true }));
               folio(b, n, edition.hotel.wordmark ?? edition.hotel.name);
             },
           });

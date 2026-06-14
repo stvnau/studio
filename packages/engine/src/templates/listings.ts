@@ -109,7 +109,6 @@ export function drawListingBlocks(b: PageBuilder, blocks: Block[], content: Rect
   const extra = gaps > 0 ? Math.min(slack / gaps, GAP * 1.6) : 0;
 
   let y = content.y;
-  let flip = false;
   blocks.forEach((bl) => {
     const rect: Rect = { x: content.x, y, w: content.w, h: bl.h };
     switch (bl.kind) {
@@ -117,8 +116,7 @@ export function drawListingBlocks(b: PageBuilder, blocks: Block[], content: Rect
         drawFull(b, rect, bl.item);
         break;
       case 'half':
-        drawHalf(b, rect, bl.item, flip);
-        flip = !flip;
+        drawHalf(b, rect, bl.item);
         break;
       case 'quarter':
         drawQuarter(b, rect, bl.item);
@@ -195,42 +193,40 @@ function drawFull(b: PageBuilder, rect: Rect, it: PlacedListing): void {
   }
 }
 
-function drawHalf(b: PageBuilder, rect: Rect, it: PlacedListing, flip: boolean): void {
+function drawHalf(b: PageBuilder, rect: Rect, it: PlacedListing): void {
   const t = b.theme;
   const id = it.r.id;
-  const imgW = rect.w * 0.44;
-  const imgX = flip ? rect.x + rect.w - imgW : rect.x;
-  const txtX = flip ? rect.x : rect.x + imgW + 16;
-  const txtW = rect.w - imgW - 16;
-
-  b.image(`listing:${id}:image`, it.r.imageId, { x: imgX, y: rect.y, w: imgW, h: rect.h }, {
+  // Image-led, content underneath — consistent with the full and hotel-info
+  // layouts: a full-width image on top, then the copy below it.
+  const imgH = rect.h * 0.5;
+  b.image(`listing:${id}:image`, it.r.imageId, { x: rect.x, y: rect.y, w: rect.w, h: imgH }, {
     radius: 2,
   });
-  numberBadge(b, imgX + 15, rect.y + 15, 9.5, it.number, it.tier, { onField: true });
+  numberBadge(b, rect.x + 15, rect.y + 15, 9.5, it.number, it.tier, { onField: true });
 
-  let ty = rect.y + 2;
+  let ty = rect.y + imgH + 11;
   if (it.r.category) {
-    b.text(`listing:${id}:kicker`, { x: txtX, y: ty, w: txtW, h: 10 }, [P(t.styles.kicker, it.r.category)]);
+    b.text(`listing:${id}:kicker`, { x: rect.x, y: ty, w: rect.w, h: 10 }, [P(t.styles.kicker, it.r.category)]);
     ty += 12;
   }
-  const name = b.text(`listing:${id}:name`, { x: txtX, y: ty, w: txtW, h: 34 }, [
-    P(t.styles.nameHalf, it.r.name),
+  const name = b.text(`listing:${id}:name`, { x: rect.x, y: ty, w: rect.w, h: 24 }, [
+    P(t.styles.nameHalf, it.r.name, { size: 13, leading: 15 }),
   ]);
-  ty += (name?.used.h ?? 14) + 5;
+  ty += (name?.used.h ?? 15) + 5;
   if (it.r.oneLiner) {
-    const ol = b.text(`listing:${id}:oneliner`, { x: txtX, y: ty, w: txtW, h: 26 }, [
-      P(t.styles.oneLiner, it.r.oneLiner),
+    const ol = b.text(`listing:${id}:oneliner`, { x: rect.x, y: ty, w: rect.w, h: 22 }, [
+      P(t.styles.oneLiner, it.r.oneLiner, { size: 9, leading: 12 }),
     ], { copyfit: { minScale: 0.72, maxScale: 1 } });
-    ty += (ol?.used.h ?? 11) + 6;
+    ty += (ol?.used.h ?? 11) + 7;
   }
-  const addrY = rect.y + rect.h - 12;
+  const addrY = rect.y + rect.h - 11;
   b.text(
     `listing:${id}:desc`,
-    { x: txtX, y: ty, w: txtW, h: addrY - ty - 4 },
+    { x: rect.x, y: ty, w: rect.w, h: addrY - ty - 4 },
     [P(t.styles.bodyRagged, it.r.description)],
-    { copyfit: { minScale: 0.8, maxScale: 1 } },
+    { copyfit: { minScale: 0.78, maxScale: 1 } },
   );
-  b.text(`listing:${id}:addr`, { x: txtX, y: addrY, w: txtW, h: 12 }, [
+  b.text(`listing:${id}:addr`, { x: rect.x, y: addrY, w: rect.w, h: 12 }, [
     P(t.styles.meta, [it.r.address, it.r.suburb].filter(Boolean).join(' · ')),
   ]);
 }

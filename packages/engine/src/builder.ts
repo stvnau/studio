@@ -8,6 +8,7 @@
  */
 
 import {
+  overridePinsGeometry,
   rectPath,
   roundedRectPath,
   type Color,
@@ -16,6 +17,7 @@ import {
   type FrameOverride,
   type ImageAsset,
   type ParagraphContent,
+  type ParagraphStyle,
   type Rect,
 } from '@guide/shared';
 import type { GuideTheme } from './theme.js';
@@ -69,18 +71,23 @@ export class PageBuilder {
     let rect = auto;
     let hidden = false;
     if (ov) {
-      const moved =
-        Math.abs(ov.base.x - auto.x) > 0.25 ||
-        Math.abs(ov.base.y - auto.y) > 0.25 ||
-        Math.abs(ov.base.w - auto.w) > 0.25 ||
-        Math.abs(ov.base.h - auto.h) > 0.25;
-      if (moved) {
-        this.diag({
-          code: 'override.conflict',
-          severity: 'warning',
-          frame: id,
-          message: `Generated layout for “${id}” changed since it was manually adjusted; keeping the manual position.`,
-        });
+      // A conflict only matters when the user pinned this frame's geometry: a
+      // typography-only override (size/leading/tracking/align/caps) keeps
+      // flowing with the data, so a layout shift there is not a conflict.
+      if (overridePinsGeometry(ov)) {
+        const moved =
+          Math.abs(ov.base.x - auto.x) > 0.25 ||
+          Math.abs(ov.base.y - auto.y) > 0.25 ||
+          Math.abs(ov.base.w - auto.w) > 0.25 ||
+          Math.abs(ov.base.h - auto.h) > 0.25;
+        if (moved) {
+          this.diag({
+            code: 'override.conflict',
+            severity: 'warning',
+            frame: id,
+            message: `Generated layout for “${id}” changed since it was manually adjusted; keeping the manual position.`,
+          });
+        }
       }
       rect = {
         x: ov.patch.x ?? auto.x,
@@ -94,9 +101,31 @@ export class PageBuilder {
     return { rect, hidden };
   }
 
-  /** Font scale override for a text frame (inspector "nudge type"). */
-  fontScaleOf(id: string): number {
-    return this.overrides.get(id)?.patch.fontScale ?? 1;
+  /**
+   * Resolve a text frame's typography override into concrete deltas. The same
+   * patch fields the inspector writes are applied here, on the single compile
+   * path — so a type tweak looks identical on the canvas and in print.
+   */
+  private typographyOf(id: string): {
+    fontScale: number;
+    leading: number;
+    tracking: number;
+    align?: ParagraphStyle['align'];
+    caps?: boolean;
+    active: boolean;
+  } {
+    const p = this.overrides.get(id)?.patch;
+    const align = mapAlign(p?.align);
+    const t = {
+      fontScale: p?.fontScale ?? 1,
+      leading: p?.leading ?? 1,
+      tracking: p?.tracking ?? 0,
+      align,
+      caps: p?.caps,
+    };
+    const active =
+      t.fontScale !== 1 || t.leading !== 1 || t.tracking !== 0 || align !== undefined || t.caps !== undefined;
+    return { ...t, active };
   }
 
   /* ---------------------------------------------------------------- */
@@ -109,14 +138,20 @@ export class PageBuilder {
   ): TypesetResult | null {
     const { rect, hidden } = this.frame(id, auto, 'text');
     if (hidden) return null;
-    const scale = this.fontScaleOf(id);
-    const scaled =
-      scale === 1
-        ? paragraphs
-        : paragraphs.map((p) => ({
-            ...p,
-            style: { ...p.style, size: p.style.size * scale, leading: p.style.leading * scale },
-          }));
+    const typo = this.typographyOf(id);
+    const scaled = !typo.active
+      ? paragraphs
+      : paragraphs.map((p) => ({
+          ...p,
+          style: {
+            ...p.style,
+            size: p.style.size * typo.fontScale,
+            leading: p.style.leading * typo.fontScale * typo.leading,
+            tracking: (p.style.tracking ?? 0) + typo.tracking,
+            ...(typo.align ? { align: typo.align } : null),
+            ...(typo.caps !== undefined ? { caps: typo.caps } : null),
+          },
+        }));
     // A frame too short to hold two lines is a single-line label; let it
     // shrink to fit its width rather than overflow. (Copyfit reduces type
     // until the one line fits — never a clipped or wrapped-away tail.)
@@ -314,4 +349,20 @@ export class PageBuilder {
 
 function clamp(v: number, lo: number, hi: number): number {
   return v < lo ? lo : v > hi ? hi : v;
+}
+
+/** Map the override's logical alignment to the type engine's alignment. */
+function mapAlign(a: FrameOverride['patch']['align']): ParagraphStyle['align'] | undefined {
+  switch (a) {
+    case 'start':
+      return 'left';
+    case 'center':
+      return 'center';
+    case 'end':
+      return 'right';
+    case 'justify':
+      return 'justify';
+    default:
+      return undefined;
+  }
 }

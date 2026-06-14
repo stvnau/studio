@@ -106,6 +106,19 @@
 .frame-hit.dragging { cursor: grabbing; }
 .frame-hit .htag { position: absolute; top: -17px; left: -1px; font-size: 9.5px; background: var(--accent); color: #fff; padding: 1px 5px; border-radius: 3px; white-space: nowrap; opacity: 0; transition: opacity 90ms; }
 .frame-hit.sel .htag, .frame-hit:hover .htag { opacity: 1; }
+.frame-hit.resizing { border-style: dashed; }
+
+/* resize handles (selected elements) */
+.frame-hit .rsz { position: absolute; width: 9px; height: 9px; background: #fff; border: 1.5px solid var(--accent); border-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.25); pointer-events: auto; z-index: 2; }
+.frame-hit .rsz-nw { top: -5px; left: -5px; cursor: nwse-resize; }
+.frame-hit .rsz-n  { top: -5px; left: 50%; margin-left: -4.5px; cursor: ns-resize; }
+.frame-hit .rsz-ne { top: -5px; right: -5px; cursor: nesw-resize; }
+.frame-hit .rsz-e  { top: 50%; right: -5px; margin-top: -4.5px; cursor: ew-resize; }
+.frame-hit .rsz-se { bottom: -5px; right: -5px; cursor: nwse-resize; }
+.frame-hit .rsz-s  { bottom: -5px; left: 50%; margin-left: -4.5px; cursor: ns-resize; }
+.frame-hit .rsz-sw { bottom: -5px; left: -5px; cursor: nesw-resize; }
+.frame-hit .rsz-w  { top: 50%; left: -5px; margin-top: -4.5px; cursor: ew-resize; }
+.frame-hit .dimtag { position: absolute; bottom: -21px; left: 50%; transform: translateX(-50%); font-size: 10px; background: var(--ink); color: #fff; padding: 1px 6px; border-radius: 3px; white-space: nowrap; font-variant-numeric: tabular-nums; pointer-events: none; }
 
 .canvas-empty { color: rgba(255,255,255,0.5); display: grid; place-items: center; gap: 10px; text-align: center; }
 
@@ -131,6 +144,19 @@
 .override-note { display: flex; align-items: flex-start; gap: 8px; padding: 10px; border-radius: var(--r-sm); font-size: 12px; line-height: 1.45; }
 .override-note.conflict { background: var(--warn-soft); color: var(--warn); }
 .override-note.pinned { background: var(--accent-wash); color: var(--accent-ink); }
+.override-note.custom { background: var(--surface-2); color: var(--ink-soft); }
+
+/* typography controls */
+.typo-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 11px; }
+.typo-row > label { font-size: 12px; color: var(--ink-soft); }
+.stepper { display: inline-flex; align-items: center; gap: 2px; background: var(--surface-2); border-radius: var(--r-sm); padding: 2px; }
+.step-btn { width: 24px; height: 24px; display: grid; place-items: center; border: 0; background: transparent; color: var(--ink-soft); border-radius: var(--r-xs); cursor: pointer; transition: background var(--t-fast), color var(--t-fast); }
+.step-btn:hover:not(:disabled) { background: var(--raised); color: var(--ink); box-shadow: var(--shadow-1); }
+.step-btn:disabled { opacity: 0.3; cursor: default; }
+.step-val { min-width: 46px; text-align: center; font-size: 12.5px; font-variant-numeric: tabular-nums; color: var(--ink); }
+.align-seg button { padding: 5px 0; width: 32px; display: inline-grid; place-items: center; }
+.typo-check { display: flex; align-items: center; gap: 9px; font-size: 13px; cursor: pointer; }
+.typo-check input { width: 15px; height: 15px; accent-color: var(--accent); }
 
 /* diagnostics */
 .diag { display: flex; gap: 10px; padding: 10px; border-radius: var(--r-sm); cursor: pointer; transition: background var(--t-fast); }

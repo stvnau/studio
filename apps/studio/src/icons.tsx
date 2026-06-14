@@ -5,7 +5,13 @@ const P = ({ d }: { d: string }) => <path d={d} />;
 
 const PATHS: Record<string, JSX.Element> = {
   plus: <P d="M8 3.2v9.6M3.2 8h9.6" />,
+  minus: <P d="M3.2 8h9.6" />,
   back: <P d="M10 3.5 5.5 8l4.5 4.5" />,
+  reset: <P d="M3.5 8a4.5 4.5 0 1 0 1.4-3.3M3.2 3.2v2.8h2.8" />,
+  alignLeft: <P d="M2.5 4h11M2.5 7.3h7M2.5 10.6h10M2.5 13.9h5.5" />,
+  alignCenter: <P d="M2.5 4h11M4.5 7.3h7M3 10.6h10M5.25 13.9h5.5" />,
+  alignRight: <P d="M2.5 4h11M6.5 7.3h7M3.5 10.6h10M8 13.9h5.5" />,
+  alignJustify: <P d="M2.5 4h11M2.5 7.3h11M2.5 10.6h11M2.5 13.9h11" />,
   chevron: <P d="M6 4l4 4-4 4" />,
   chevronDown: <P d="M4 6l4 4 4-4" />,
   page: <rect x="4" y="2.5" width="8" height="11" rx="1.2" />,

@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { EditorCtx } from './editor.js';
 import type { PagePreview } from '../api.js';
 import type { FrameOverride, Rect } from '@guide/shared';
+import { overridePinsGeometry, ptToMm } from '@guide/shared';
 import { Icon } from '../icons.js';
 
 export function Canvas({ ctx }: { ctx: EditorCtx }) {
@@ -158,16 +159,42 @@ function PageView({ ctx, page, scale, offset, frames, selection, select }: {
   );
 }
 
+type Handle = 'nw' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w';
+const HANDLES: Handle[] = ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'];
+const MIN_PT = 8; // smallest a frame may be dragged to
+
 function FrameHit({ ctx, frameId, rect, kind, scale, offset, selected, override, host, select }: {
   ctx: EditorCtx; frameId: string; rect: Rect; kind: string; scale: number; offset: number;
   selected: boolean; override?: FrameOverride; host: React.RefObject<HTMLDivElement>; select: () => void;
 }) {
-  const left = (rect.x - offset) * scale;
-  const top = (rect.y - offset) * scale;
-  const w = rect.w * scale;
-  const h = rect.h * scale;
   const [drag, setDrag] = useState(false);
-  const moved = !!override && (override.patch.x !== undefined || override.patch.y !== undefined);
+  // While resizing, `live` holds the in-progress box (pt) for the outline only;
+  // the SVG content reflows on commit, keeping canvas == print honest.
+  const [live, setLive] = useState<Rect | null>(null);
+  const box = live ?? rect;
+  const left = (box.x - offset) * scale;
+  const top = (box.y - offset) * scale;
+  const w = box.w * scale;
+  const h = box.h * scale;
+  const moved = !!override && overridePinsGeometry(override);
+
+  // Upsert a geometry override, recording the auto rect as the conflict base.
+  const commit = (next: Rect) => {
+    ctx.update((edn) => {
+      const ex = edn.overrides.find((o) => o.frame === frameId);
+      if (ex) {
+        ex.patch.x = next.x; ex.patch.y = next.y; ex.patch.w = next.w; ex.patch.h = next.h;
+        ex.at = new Date().toISOString();
+      } else {
+        edn.overrides.push({
+          frame: frameId,
+          patch: { x: next.x, y: next.y, w: next.w, h: next.h },
+          base: { x: rect.x, y: rect.y, w: rect.w, h: rect.h },
+          at: new Date().toISOString(),
+        });
+      }
+    });
+  };
 
   const onMouseDown = (e: React.MouseEvent) => {
     if (!selected) { select(); return; }
@@ -192,32 +219,56 @@ function FrameHit({ ctx, frameId, rect, kind, scale, offset, selected, override,
       const dy = (ev.clientY - sy) / scale;
       hit.style.transform = '';
       if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
-      ctx.update((edn) => {
-        const existing = edn.overrides.find((o) => o.frame === frameId);
-        if (existing) {
-          existing.patch.x = (existing.patch.x ?? baseX) + dx;
-          existing.patch.y = (existing.patch.y ?? baseY) + dy;
-          existing.at = new Date().toISOString();
-        } else {
-          edn.overrides.push({
-            frame: frameId,
-            patch: { x: baseX + dx, y: baseY + dy, w: rect.w, h: rect.h },
-            base: { x: baseX, y: baseY, w: rect.w, h: rect.h },
-            at: new Date().toISOString(),
-          });
-        }
-      });
+      commit({ x: baseX + dx, y: baseY + dy, w: rect.w, h: rect.h });
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  };
+
+  // Resize from a handle: adjust the edges the handle controls, clamp to a
+  // minimum, then commit the new box on release.
+  const onHandleDown = (handle: Handle) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const sx = e.clientX, sy = e.clientY;
+    const start = { x: rect.x, y: rect.y, w: rect.w, h: rect.h };
+    const at = (ev: MouseEvent): Rect => {
+      const dx = (ev.clientX - sx) / scale;
+      const dy = (ev.clientY - sy) / scale;
+      let { x, y, w: nw, h: nh } = start;
+      if (handle.includes('e')) nw = start.w + dx;
+      if (handle.includes('s')) nh = start.h + dy;
+      if (handle.includes('w')) { nw = start.w - dx; x = start.x + dx; }
+      if (handle.includes('n')) { nh = start.h - dy; y = start.y + dy; }
+      if (nw < MIN_PT) { if (handle.includes('w')) x = start.x + start.w - MIN_PT; nw = MIN_PT; }
+      if (nh < MIN_PT) { if (handle.includes('n')) y = start.y + start.h - MIN_PT; nh = MIN_PT; }
+      return { x, y, w: nw, h: nh };
+    };
+    const onMove = (ev: MouseEvent) => setLive(at(ev));
+    const onUp = (ev: MouseEvent) => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+      const next = at(ev);
+      setLive(null);
+      const changed =
+        Math.abs(next.x - start.x) > 0.5 || Math.abs(next.y - start.y) > 0.5 ||
+        Math.abs(next.w - start.w) > 0.5 || Math.abs(next.h - start.h) > 0.5;
+      if (changed) commit(next);
     };
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onUp);
   };
 
   return (
-    <div className={`frame-hit ${selected ? 'sel' : ''} ${drag ? 'dragging' : ''} ${moved ? 'moved' : ''}`}
+    <div className={`frame-hit ${selected ? 'sel' : ''} ${drag ? 'dragging' : ''} ${live ? 'resizing' : ''} ${moved ? 'moved' : ''}`}
       style={{ left, top, width: w, height: h }}
       onMouseDown={onMouseDown}
       onClick={(e) => { e.stopPropagation(); if (!selected) select(); }}>
       <span className="htag">{kind}</span>
+      {live && <span className="dimtag">{ptToMm(live.w).toFixed(1)} × {ptToMm(live.h).toFixed(1)} mm</span>}
+      {selected && HANDLES.map((hd) => (
+        <span key={hd} className={`rsz rsz-${hd}`} onMouseDown={onHandleDown(hd)} />
+      ))}
     </div>
   );
 }

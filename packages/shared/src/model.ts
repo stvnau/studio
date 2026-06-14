@@ -140,6 +140,10 @@ export type PageKind = PageSpec['kind'];
  * override; if regeneration later disagrees with `base`, the engine keeps
  * the manual value and raises `override.conflict` instead of silently
  * discarding either.
+ *
+ * Geometry (x/y/w/h) and typography (the rest) are independent: a frame can
+ * carry a type tweak without pinning its position, so it still reflows with
+ * the data — only the geometry fields, when present, pin it in place.
  */
 export interface FrameOverride {
   frame: string;
@@ -150,11 +154,24 @@ export interface FrameOverride {
     h?: number;
     /** Multiplier on the frame's resolved type size (text frames). */
     fontScale?: number;
-    align?: 'start' | 'center' | 'end';
+    /** Multiplier on the frame's resolved leading, on top of fontScale. */
+    leading?: number;
+    /** Letter-spacing delta added to the resolved tracking, in 1/1000 em. */
+    tracking?: number;
+    /** Paragraph alignment for a text frame (mapped to the type engine). */
+    align?: 'start' | 'center' | 'end' | 'justify';
+    /** Force all-caps on a text frame. */
+    caps?: boolean;
     hidden?: boolean;
   };
   base: { x: number; y: number; w: number; h: number };
   at: string; // ISO timestamp
+}
+
+/** Does this override pin the frame's geometry (vs. typography only)? */
+export function overridePinsGeometry(o: Pick<FrameOverride, 'patch'>): boolean {
+  const p = o.patch;
+  return p.x !== undefined || p.y !== undefined || p.w !== undefined || p.h !== undefined;
 }
 
 /* ------------------------------------------------------------------ */

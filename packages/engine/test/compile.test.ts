@@ -9,7 +9,10 @@ import {
   numberedListings,
   walkItems,
   type Business,
+  type DLItem,
   type Edition,
+  type FrameOverride,
+  type GlyphRun,
 } from '@guide/shared';
 import { FontManager } from '../src/fonts.js';
 import { NodeFontSource } from '@guide/fonts/node';
@@ -94,6 +97,25 @@ const assetCatalog: AssetCatalog = {
   get: (id) => ({ id, filename: `${id}.jpg`, width: 1600, height: 2000, focal: { x: 0.5, y: 0.5 } }),
 };
 
+/** First glyph run of the text item bound to a given frame id, or undefined. */
+function runForFrame(render: { pages: { items: DLItem[] }[] }, frame: string): GlyphRun | undefined {
+  for (const page of render.pages) {
+    for (const item of walkItems(page.items)) {
+      if (item.t === 'text' && item.meta?.frame === frame && item.runs[0]) return item.runs[0];
+    }
+  }
+  return undefined;
+}
+
+async function compile(edition: Edition, businesses: Map<string, Business>) {
+  const fonts = new FontManager(new NodeFontSource());
+  return compileEdition(edition, {
+    fonts,
+    assets: assetCatalog,
+    businesses: { get: (id) => businesses.get(id) },
+  });
+}
+
 describe('compileEdition', () => {
   it('compiles every page with no error diagnostics and stable numbering', async () => {
     const { edition, businesses } = makeEdition();
@@ -158,5 +180,65 @@ describe('compileEdition', () => {
       }
     }
     expect(textItems).toBeGreaterThan(10);
+  });
+});
+
+describe('typography overrides', () => {
+  const frame = 'listing:l0:name';
+  const span = (r: GlyphRun) =>
+    Math.max(...r.glyphs.map((g) => g.x)) - Math.min(...r.glyphs.map((g) => g.x));
+
+  it('apply size, caps and alignment through the single compile path', async () => {
+    const { edition, businesses } = makeEdition();
+    const base = await compile(edition, businesses);
+    const baseRun = runForFrame(base, frame);
+    expect(baseRun).toBeDefined();
+
+    const ov: FrameOverride = {
+      frame,
+      patch: { fontScale: 0.5, caps: true, align: 'center' },
+      base: { x: 0, y: 0, w: 0, h: 0 },
+      at: new Date().toISOString(),
+    };
+    const after = await compile({ ...edition, overrides: [ov] }, businesses);
+    const run = runForFrame(after, frame);
+    expect(run).toBeDefined();
+
+    // Type size halved.
+    expect(run!.size).toBeCloseTo(baseRun!.size * 0.5, 1);
+    // Forced caps: the run text is upper-cased (and the default was not).
+    expect(run!.text).toBe(run!.text.toUpperCase());
+    expect(baseRun!.text).not.toBe(baseRun!.text.toUpperCase());
+    // Centred: the first glyph sits to the right of the left-aligned default.
+    const baseX = Math.min(...baseRun!.glyphs.map((g) => g.x));
+    const editedX = Math.min(...run!.glyphs.map((g) => g.x));
+    expect(editedX).toBeGreaterThan(baseX);
+  });
+
+  it('letter-spacing widens a single-line run', async () => {
+    const { edition, businesses } = makeEdition();
+    const baseRun = runForFrame(await compile(edition, businesses), frame)!;
+    const ov: FrameOverride = {
+      frame,
+      patch: { tracking: 300 },
+      base: { x: 0, y: 0, w: 0, h: 0 },
+      at: new Date().toISOString(),
+    };
+    const run = runForFrame(await compile({ ...edition, overrides: [ov] }, businesses), frame)!;
+    expect(span(run)).toBeGreaterThan(span(baseRun));
+  });
+
+  it('do not raise an override conflict when only typography changed', async () => {
+    const { edition, businesses } = makeEdition();
+    // base deliberately disagrees with the auto rect; with no geometry pinned
+    // that must NOT be reported as a conflict (the frame still reflows).
+    const ov: FrameOverride = {
+      frame,
+      patch: { fontScale: 0.8 },
+      base: { x: -999, y: -999, w: 1, h: 1 },
+      at: new Date().toISOString(),
+    };
+    const render = await compile({ ...edition, overrides: [ov] }, businesses);
+    expect(render.diagnostics.filter((d) => d.code === 'override.conflict')).toHaveLength(0);
   });
 });

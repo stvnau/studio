@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import type { EditorCtx } from './editor.js';
 import type { Diagnostic, FrameOverride } from '@guide/shared';
-import { PT_PER_MM, ptToMm, worstSeverity } from '@guide/shared';
+import { PT_PER_MM, overridePinsGeometry, ptToMm, worstSeverity } from '@guide/shared';
 import { Icon } from '../icons.js';
+
+type Patch = FrameOverride['patch'];
+type Align = NonNullable<Patch['align']>;
 
 export function Inspector({ ctx }: { ctx: EditorCtx }) {
   const { preview } = ctx;
@@ -164,25 +167,56 @@ function Properties({ ctx }: { ctx: EditorCtx }) {
   const page = preview!.pages.find((p) => p.pageId === frame.pageId);
   const bleed = page?.bleed ?? 0;
   const override = edition.overrides.find((o) => o.frame === frameId);
+  const patch = override?.patch;
   const r = frame.rect;
+  const isText = frame.kind === 'text';
 
-  const setPatch = (patch: Partial<FrameOverride['patch']>) => {
+  // Pin geometry: seed all four sides so the box is fully fixed, then apply the
+  // edit. Typing a coordinate is an explicit "place it here".
+  const setGeom = (p: Partial<Patch>) => {
     update((e) => {
       const ex = e.overrides.find((o) => o.frame === frameId);
       if (ex) {
-        Object.assign(ex.patch, patch);
+        Object.assign(ex.patch, p);
         ex.at = new Date().toISOString();
       } else {
         e.overrides.push({
           frame: frameId,
-          patch: { x: r.x, y: r.y, w: r.w, h: r.h, ...patch },
+          patch: { x: r.x, y: r.y, w: r.w, h: r.h, ...p },
           base: { x: r.x, y: r.y, w: r.w, h: r.h },
           at: new Date().toISOString(),
         });
       }
     });
   };
+
+  // Set or clear a single field WITHOUT pinning geometry (typography, hide), so
+  // the element keeps reflowing with the data. Pruned when nothing is left.
+  const setField = <K extends keyof Patch>(field: K, value: Patch[K] | undefined) => {
+    update((e) => {
+      let ov = e.overrides.find((o) => o.frame === frameId);
+      if (!ov) {
+        if (value === undefined) return;
+        ov = { frame: frameId, patch: {}, base: { x: r.x, y: r.y, w: r.w, h: r.h }, at: '' };
+        e.overrides.push(ov);
+      }
+      if (value === undefined) delete ov.patch[field];
+      else ov.patch[field] = value;
+      ov.at = new Date().toISOString();
+      if (Object.keys(ov.patch).length === 0) e.overrides = e.overrides.filter((o) => o !== ov);
+    });
+  };
+
   const reset = () => update((e) => { e.overrides = e.overrides.filter((o) => o.frame !== frameId); });
+  // Drop only the geometry pin, keeping any typography overrides intact.
+  const unpin = () => update((e) => {
+    const ov = e.overrides.find((o) => o.frame === frameId);
+    if (!ov) return;
+    delete ov.patch.x; delete ov.patch.y; delete ov.patch.w; delete ov.patch.h;
+    ov.at = new Date().toISOString();
+    if (Object.keys(ov.patch).length === 0) e.overrides = e.overrides.filter((o) => o !== ov);
+  });
+  const pinned = override ? overridePinsGeometry(override) : false;
 
   // Coordinates shown in mm from the trim edge.
   const toMm = (ptVal: number, sub = 0) => +(ptToMm(ptVal - sub)).toFixed(1);
@@ -191,38 +225,94 @@ function Properties({ ctx }: { ctx: EditorCtx }) {
   return (
     <>
       <ListingContent ctx={ctx} frameId={frameId} />
+
+      {isText && (
+        <div className="insp-block">
+          <h4>Typography</h4>
+          <Stepper label="Type size" value={patch?.fontScale ?? 1} min={0.5} max={2.5} step={0.05}
+            fmt={pct} onChange={(v) => setField('fontScale', near(v, 1) ? undefined : v)} />
+          <Stepper label="Line spacing" value={patch?.leading ?? 1} min={0.6} max={2} step={0.05}
+            fmt={pct} onChange={(v) => setField('leading', near(v, 1) ? undefined : v)} />
+          <Stepper label="Letter spacing" value={patch?.tracking ?? 0} min={-80} max={400} step={10}
+            fmt={(v) => `${v > 0 ? '+' : ''}${Math.round(v)}`} onChange={(v) => setField('tracking', near(v, 0) ? undefined : v)} />
+          <div className="typo-row">
+            <label>Alignment</label>
+            <div className="seg align-seg">
+              {(['start', 'center', 'end', 'justify'] as Align[]).map((a) => (
+                <button key={a} className={patch?.align === a ? 'on' : ''} title={ALIGN_LABEL[a]}
+                  onClick={() => setField('align', patch?.align === a ? undefined : a)}>
+                  <Icon name={ALIGN_ICON[a]} size={14} />
+                </button>
+              ))}
+            </div>
+          </div>
+          <label className="typo-check">
+            <input type="checkbox" checked={!!patch?.caps} onChange={(e) => setField('caps', e.target.checked ? true : undefined)} />
+            Uppercase
+          </label>
+        </div>
+      )}
+
       <div className="insp-block">
-        <h4>{frame.kind} · element</h4>
+        <h4>Size &amp; position</h4>
         <div style={{ fontSize: 12, color: 'var(--ink-faint)', marginBottom: 12, wordBreak: 'break-all', fontVariantNumeric: 'tabular-nums' }}>{frameId}</div>
         <div className="coord-grid">
-          <Coord label="X (mm)" value={toMm(r.x, bleed)} onCommit={(v) => setPatch({ x: fromMm(v, bleed) })} />
-          <Coord label="Y (mm)" value={toMm(r.y, bleed)} onCommit={(v) => setPatch({ y: fromMm(v, bleed) })} />
-          <Coord label="W (mm)" value={toMm(r.w)} onCommit={(v) => setPatch({ w: fromMm(v) })} />
-          <Coord label="H (mm)" value={toMm(r.h)} onCommit={(v) => setPatch({ h: fromMm(v) })} />
+          <Coord label="X (mm)" value={toMm(r.x, bleed)} onCommit={(v) => setGeom({ x: fromMm(v, bleed) })} />
+          <Coord label="Y (mm)" value={toMm(r.y, bleed)} onCommit={(v) => setGeom({ y: fromMm(v, bleed) })} />
+          <Coord label="W (mm)" value={toMm(r.w)} onCommit={(v) => setGeom({ w: fromMm(v) })} />
+          <Coord label="H (mm)" value={toMm(r.h)} onCommit={(v) => setGeom({ h: fromMm(v) })} />
         </div>
+        {pinned && (
+          <button className="btn sm ghost" style={{ marginTop: 10 }} onClick={unpin}>
+            <Icon name="reset" size={13} /> Unpin position
+          </button>
+        )}
       </div>
 
       <div className="insp-block">
         <h4>Override</h4>
         {override ? (
           <>
-            <div className="override-note pinned" style={{ marginBottom: 10 }}>
+            <div className={`override-note ${pinned ? 'pinned' : 'custom'}`} style={{ marginBottom: 10 }}>
               <Icon name="info" size={14} />
-              <span>This element is pinned. Data changes won’t move it; later layout shifts are flagged instead of discarding your placement.</span>
+              <span>{pinned
+                ? 'Pinned in place. Data changes won’t move it; later layout shifts are flagged instead of discarding your placement.'
+                : 'Custom styling applied. This element still reflows with the data — only its look is overridden.'}</span>
             </div>
-            <button className="btn sm" onClick={reset}><Icon name="back" size={13} /> Reset to automatic</button>
+            <button className="btn sm" onClick={reset}><Icon name="reset" size={13} /> Reset to automatic</button>
           </>
         ) : (
-          <div className="faint" style={{ fontSize: 12.5 }}>Automatic. Drag on the canvas or edit a value to pin this element.</div>
+          <div className="faint" style={{ fontSize: 12.5 }}>Automatic. Drag, resize, or restyle this element to override it.</div>
         )}
-        <div style={{ marginTop: 14 }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, cursor: 'pointer' }}>
-            <input type="checkbox" checked={!!override?.patch.hidden} onChange={(e) => setPatch({ hidden: e.target.checked })} />
-            Hide this element
-          </label>
-        </div>
+        <label className="typo-check" style={{ marginTop: 14 }}>
+          <input type="checkbox" checked={!!patch?.hidden} onChange={(e) => setField('hidden', e.target.checked ? true : undefined)} />
+          Hide this element
+        </label>
       </div>
     </>
+  );
+}
+
+const ALIGN_ICON: Record<Align, string> = { start: 'alignLeft', center: 'alignCenter', end: 'alignRight', justify: 'alignJustify' };
+const ALIGN_LABEL: Record<Align, string> = { start: 'Left', center: 'Centre', end: 'Right', justify: 'Justify' };
+const pct = (v: number) => `${Math.round(v * 100)}%`;
+const near = (a: number, b: number) => Math.abs(a - b) < 1e-6;
+
+/** A labelled −/value/+ control. Values are clamped and rounded to 3 dp. */
+function Stepper({ label, value, min, max, step, fmt, onChange }: {
+  label: string; value: number; min: number; max: number; step: number;
+  fmt: (v: number) => string; onChange: (v: number) => void;
+}) {
+  const set = (v: number) => onChange(Math.min(max, Math.max(min, Math.round(v * 1000) / 1000)));
+  return (
+    <div className="typo-row">
+      <label>{label}</label>
+      <div className="stepper">
+        <button className="step-btn" onClick={() => set(value - step)} disabled={value <= min} title="Decrease"><Icon name="minus" size={13} /></button>
+        <span className="step-val">{fmt(value)}</span>
+        <button className="step-btn" onClick={() => set(value + step)} disabled={value >= max} title="Increase"><Icon name="plus" size={13} /></button>
+      </div>
+    </div>
   );
 }
 

@@ -559,29 +559,14 @@
           ]
         },
         {
-          "id": "p-div-eat",
-          "kind": "divider",
-          "sectionId": "eat"
-        },
-        {
           "id": "p-list-eat",
           "kind": "listings",
           "sectionId": "eat"
         },
         {
-          "id": "p-div-do",
-          "kind": "divider",
-          "sectionId": "do"
-        },
-        {
           "id": "p-list-do",
           "kind": "listings",
           "sectionId": "do"
-        },
-        {
-          "id": "p-div-shop",
-          "kind": "divider",
-          "sectionId": "shop"
         },
         {
           "id": "p-list-shop",
